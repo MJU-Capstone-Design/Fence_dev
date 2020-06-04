@@ -13,11 +13,29 @@ git clone https://github.com/MJU-Capstone-Design/Fence_dev.git
 ### 2. 작업 branch 생성
 
 - branch는 다른 사람과 작업 공간이 겹치는 것을 방지하는데 도움을 주는 기능입니다.
+- **branch 꼭 만들어서 작업해주세요!!ㅠㅠ**
 
 ```sh
 cd Fence_dev # clone해서 만들어진 폴더로 이동
 git checkout -b 자기 영어 이름(내 브랜치 이름이 됨) # ex) git checkout -b yurim
 ```
+
+### 3. npm install 받기
+
+- 기본 환경으로 설정한 package들을 한번에 다운받을 수 있습니다.
+```sh
+npm install
+```
+
+### 4. server와 client 한번에 실행시키기
+
+- server와 client 폴더가 따로 되어있어 원래는 server와 client를 각각 실행시켜주어야 하는 불편함이 있습니다.
+- 이와같은 점을 해결하기 위해 `concurrently`라는 package를 다운받아 설정해두었습니다.
+
+```sh
+npm run dev
+```
+Fence 폴더에서 `npm run dev`를 실행하면 server와 client를 동시에 실행시킬 수 있습니다.
 
 ## 내가 한 코드 업로드
 
@@ -31,3 +49,4 @@ git commit -m "기능에 대한 간단한 설명"
 git push origin 본인 브랜치 이름(본인 영어 이름)
 # ex) git push origin yurim
 ```
+
