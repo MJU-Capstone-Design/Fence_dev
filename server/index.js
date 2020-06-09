@@ -11,21 +11,12 @@ app.listen(port, () =>
   console.log(`Example app listening at http://localhost:${port}`)
 );
 
-// app.get("/persons", function (req, res) {
-//   connection.query("SELECT * from Persons", function (err, rows) {
-//     if (err) throw err;
 
-//     console.log("The solution is: ", rows);
-//     res.send(rows);
-//   });
-// });
-
-app.get("/users", function (req, res) {
+app.get("/api/users", function (req, res) {
   var queryString = "SELECT * FROM users";
 
   connection.query(queryString, function (err, rows, field) {
     if (err) throw err;
-
     res.json(rows);
   });
 });
