@@ -26,6 +26,11 @@ git checkout -b 자기 영어 이름(내 브랜치 이름이 됨) # ex) git chec
 ```sh
 npm install
 ```
+- client 폴더로 들어가서 한번더 install 작업을 실행해주세요.
+```sh
+cd client
+npm install
+```
 
 ### 4. server와 client 한번에 실행시키기
 
