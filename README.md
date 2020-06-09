@@ -32,7 +32,20 @@ cd client
 npm install
 ```
 
-### 4. server와 client 한번에 실행시키기
+### 4. mysql 정보 입력하기
+
+- 서버 폴더에가서 `config`폴더를 만들고 `config`폴더 안에 `database.js`파일을 생성하여 본인 mysql 정보를 입력해주세요.
+```javascript
+// database.js
+module.exports = {
+  host: "localhost",
+  user: "<사용자 예) root>",
+  password: "<비밀번호>",
+  database: "<사용할 db 이름>",
+};
+```
+
+### 5. server와 client 한번에 실행시키기
 
 - server와 client 폴더가 따로 되어있어 원래는 server와 client를 각각 실행시켜주어야 하는 불편함이 있습니다.
 - 이와같은 점을 해결하기 위해 `concurrently`라는 package를 다운받아 설정해두었습니다.
