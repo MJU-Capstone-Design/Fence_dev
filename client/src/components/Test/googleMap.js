@@ -1,85 +1,123 @@
+/*global google*/
+import React from 'react'
+import { apiKey } from './API_KEY.js';
+import { Config } from '../../config';
 
-import React, { PropTypes, Component } from 'react';
-import GoogleMapReact from 'google-map-react';
-import controllable from 'react-controllables';
-const googleAPI = require('./API_KEY.js');
-const AnyReactComponent = ({ img_src }) => <div><img src={img_src} className="YOUR-CLASS-NAME" style={{}} /></div>;
+const { compose, withProps, withHandlers, withStateHandlers } = require("recompose");
+const {
+  withScriptjs,
+  withGoogleMap,
+  GoogleMap,
+  Marker,
+  InfoWindow,
+} = require("react-google-maps");
+const { FaAnchor } = require("react-icons/fa");
+const fetch = require("isomorphic-fetch");
+const { MarkerClusterer } = require("react-google-maps/lib/components/addons/MarkerClusterer");
+var markerPolice = require('./pinImage/policeStationPin.png');
+var markerLight = require('./pinImage/lightPin.png');
+var markerCCTV = require('./pinImage/cctvPin2.png');
 
-@controllable(['center', 'zoom', 'hoverKey', 'clickKey'])
-  
-class GoogleMap extends Component {
-  static propTypes = {
-    center: PropTypes.array, // @controllable
-    zoom: PropTypes.number, // @controllable
-    hoverKey: PropTypes.string, // @controllable
-    clickKey: PropTypes.string, // @controllable
-    onCenterChange: PropTypes.func, // @controllable generated fn
-    onZoomChange: PropTypes.func, // @controllable generated fn
-    onHoverKeyChange: PropTypes.func, // @controllable generated fn
-  };
-  static defaultProps = {
-    center: {
-      lat: 37.537559, 
-      lng: 126.988260
+// iconUrl = ... (if else choose image)
+
+const { InfoBox } = require("react-google-maps/lib/components/addons/InfoBox");
+const StyledMapWithAnInfoBox = compose(
+  withProps({
+    googleMapURL: `https://maps.googleapis.com/maps/api/js?key=${apiKey}&v=3.exp&libraries=geometry,drawing,places`,
+    loadingElement: <div style={{ height: `100%` }} />,
+    containerElement: <div style={{ height: `800px` }} />,
+    mapElement: <div style={{ height: `100%` }} />,
+    center: { lat: 25.03, lng: 121.6 },
+  }),
+  withStateHandlers(() => ({
+    isOpen: false,
+  }), {
+    onToggleOpen: ({ isOpen }) => () => ({
+      isOpen: !isOpen,
+    })
+  }),
+  withHandlers({
+    onMarkerClustererClick: () => (markerClusterer) => {
+      const clickedMarkers = markerClusterer.getMarkers()
+      console.log(`Current clicked markers length: ${clickedMarkers.length}`)
+      console.log(clickedMarkers)
     },
-    zoom: 15
-  };
-  constructor(props){
-    super(props);
-    this.state = {
-        markers: [],
+    onMarkerClick: () => (marker) => {
+      marker.isOpen = !marker.isOpen 
+      console.log(marker)
     }
-  }
-  componentDidMount(){
-    // or you can set markers list somewhere else
-    // please also set your correct lat & lng
-    // you may only use 1 image for all markers, if then, remove the img_src attribute ^^
-    this.setState({
-      markers:[{lat: 37.537559, lng: 126.988260, img_src: './marker.png'}]
-    });
-  }
-  _onChildClick = (key, childProps) => {
-    this.props.onCenterChange([childProps.lat, childProps.lng]);
-  }
-  markerClicked(marker) {
-    console.log("The marker that was clicked is", marker);
-    // you may do many things with the "marker" object, please see more on tutorial of the library's author:
-   // https://github.com/istarkov/google-map-react/blob/master/API.md#onchildclick-func 
-   // Look at their examples and you may have some ideas, you can also have the hover effect on markers, but it's a bit more complicated I think 
-  }
-  _onClick = ({x, y, lat, lng, event}) => {
-    console.log(x, y, lat, lng, event)
-    this.props.onCenterChange([lat, lng]);
+  }),
+  withScriptjs,
+  withGoogleMap
+)(props =>
+  <GoogleMap
+    defaultZoom={12}
+    defaultCenter={{lat: 37.637559, lng: 126.988260 }}
+    options={{maxZoom:18}}
+  >
+    {console.log("pros : ", props)}  
+    <MarkerClusterer
+      onClick={props.onMarkerClustererClick}
+      averageCenter
+      enableRetinaIcons
+      gridSize={60}
+      minimumClusterSize={5}
+    >
+      {props.markers.map((marker, idx) => (
+        <Marker
+          onClick={props.onMarkerClick}
+          key={idx}
+          position={{ lat: marker.lat, lng: marker.lng }}
+          icon={{ url: markerCCTV }}
+        />
+      ))}
+    </MarkerClusterer>
+  </GoogleMap>
+);
 
+class TestMap extends React.PureComponent {
+  state = {
+    isMarkerShown: false,
   }
-  
+  componentWillMount() {
+    this.setState({ markers: [] })
+  }
+  componentDidMount() {
+    this.delayedShowMarker()
+    console.log("componentDidMount")
+
+    const cctv = '/api/cctvs';
+    const light = '/api/lights';
+    const police = '/api/polices';
+    const bell = '/api/bells';
+    fetch(cctv)
+      .then(res => res.json())
+      .then(data => {
+        this.setState({ markers : data });
+        console.log(data)
+        console.log(this.state)
+      });
+  }
+
+  delayedShowMarker = () => {
+    setTimeout(() => {
+      this.setState({ isMarkerShown: true })
+    }, 3000)
+  }
+
+  handleMarkerClick = () => {
+    this.setState({ isMarkerShown: false })
+    this.delayedShowMarker()
+  }
+
   render() {
     return (
-      <GoogleMapReact
-        onClick={this._onClick} 
-        bootstrapURLKeys = {{key: googleAPI.apiKey}}
-        defaultCenter={this.props.center}
-        defaultZoom={this.props.zoom}
-        style={{height: '300px'}}
-        onChildClick={this._onChildClick}
-      >
-        {this.state.markers.map((marker, i) =>{
-          return(
-            <AnyReactComponent
-              key = {i}
-              lat={marker.lat}
-              lng={marker.lng}
-              img_src={marker.img_src}
-              onChildClick={this.markerClicked.bind(this, marker)}
-            />
-          )
-        })}      
-      </GoogleMapReact>
-    );
+      <StyledMapWithAnInfoBox
+        markers={this.state.markers}
+        isMarkerShown={this.state.isMarkerShown}
+        // onMarkerClick={this.handleMarkerClick}
+      />
+    )
   }
 }
-// GoogleMap.defaultProps = {
-//      center: {lat: 37.537559, lng: 126.988260},
-//      zoom: 11
-// };
-export default GoogleMap;
+export default TestMap

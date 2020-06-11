@@ -1,11 +1,12 @@
 import React, { Component } from "react";
 import Test from "./components/Test/Test";
 import Intro from "./components/Test/intro";
-import GoogleMap from "./components/Test/googleMap";
+import Map from "./components/Test/googleMap";
 
 function App() {
   // return <Intro />;
-  return <GoogleMap />;
+  // return <GoogleMap />;
+  return <Map />;
 }
 
 // class App extends Component {
