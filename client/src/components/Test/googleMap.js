@@ -86,17 +86,17 @@ class TestMap extends React.PureComponent {
     this.delayedShowMarker()
     console.log("componentDidMount")
 
-    const cctv = '/api/cctvs';
-    const light = '/api/lights';
-    const police = '/api/polices';
-    const bell = '/api/bells';
-    fetch(cctv)
-      .then(res => res.json())
-      .then(data => {
-        this.setState({ markers : data });
-        console.log(data)
-        console.log(this.state)
-      });
+    // const cctv = '/api/cctvs';
+    // const light = '/api/lights';
+    // const police = '/api/polices';
+    // const bell = '/api/bells';
+    // fetch(cctv)
+    //   .then(res => res.json())
+    //   .then(data => {
+    //     this.setState({ markers : data });
+    //     console.log(data)
+    //     console.log(this.state)
+    //   });
   }
 
   delayedShowMarker = () => {

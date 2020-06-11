@@ -7,9 +7,9 @@ const connection = mysql.createConnection(dbconfig);
 
 app.get("/", (req, res) => res.send("Hello World!"));
 
-app.listen(port, () =>
-  console.log(`Example app listening at http://localhost:${port}`)
-);
+// app.listen(port, () =>
+//   console.log(`Example app listening at http://localhost:${port}`)
+// );
 
 app.get("/api/lights", (req, res) => {
   console.log("come in /api/light")
