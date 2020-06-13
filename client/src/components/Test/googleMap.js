@@ -2,6 +2,9 @@
 import React from 'react'
 import { apiKey } from './API_KEY.js';
 import { Config } from '../../config';
+import Menu from "./menu.js";
+import MapControler from "./mapControler.js";
+
 
 const { compose, withProps, withHandlers, withStateHandlers } = require("recompose");
 const {
@@ -14,14 +17,14 @@ const {
 const { FaAnchor } = require("react-icons/fa");
 const fetch = require("isomorphic-fetch");
 const { MarkerClusterer } = require("react-google-maps/lib/components/addons/MarkerClusterer");
-var markerPolice = require('./pinImage/policeStationPin.png');
-var markerLight = require('./pinImage/lightPin.png');
+var markerPolice = require('./pinImage/policeStationPin2.png');
+var markerLight = require('./pinImage/lightPin2.png');
 var markerCCTV = require('./pinImage/cctvPin2.png');
 
 // iconUrl = ... (if else choose image)
 
 const { InfoBox } = require("react-google-maps/lib/components/addons/InfoBox");
-const StyledMapWithAnInfoBox = compose(
+const GoogleMapWithPins = compose(
   withProps({
     googleMapURL: `https://maps.googleapis.com/maps/api/js?key=${apiKey}&v=3.exp&libraries=geometry,drawing,places`,
     loadingElement: <div style={{ height: `100%` }} />,
@@ -72,10 +75,14 @@ const StyledMapWithAnInfoBox = compose(
         />
       ))}
     </MarkerClusterer>
+    <MapControler position={google.maps.ControlPosition.RIGHT_TOP}>
+      <Menu />
+
+    </MapControler>
   </GoogleMap>
 );
 
-class TestMap extends React.PureComponent {
+class Map extends React.PureComponent {
   state = {
     isMarkerShown: false,
   }
@@ -112,12 +119,16 @@ class TestMap extends React.PureComponent {
 
   render() {
     return (
-      <StyledMapWithAnInfoBox
-        markers={this.state.markers}
-        isMarkerShown={this.state.isMarkerShown}
-        // onMarkerClick={this.handleMarkerClick}
-      />
+      <div id="mapWithMenu">
+        <GoogleMapWithPins
+          markers={this.state.markers}
+          isMarkerShown={this.state.isMarkerShown}
+          // onMarkerClick={this.handleMarkerClick}
+        />
+        {/* <Menu /> */}
+      </div>
+      
     )
   }
 }
-export default TestMap
+export default Map
