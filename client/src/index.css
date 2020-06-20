@@ -34,3 +34,18 @@ code {
   border-radius: 8px;
   outline: none;
 }
+
+.locate {
+  position: absolute;
+  top: 1rem;
+  right: 32%;
+  background: none;
+  border: none;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+
+.locate img {
+  width: 50px;
+  cursor: pointer;
+}
