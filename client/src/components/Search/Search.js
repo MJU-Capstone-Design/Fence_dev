@@ -90,7 +90,7 @@ function Search({ onPlaceSelected }) {
         <ComboboxPopover>
           <ComboboxList>
             {status === "OK" &&
-              data.map(({ id, description, main_text }) => (
+              data.map(({ id, description }) => (
                 <ComboboxOption key={id} value={description}>
                   📍 <ComboboxOptionText />
                 </ComboboxOption>

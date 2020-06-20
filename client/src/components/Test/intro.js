@@ -1,47 +1,25 @@
-import React, { Component } from 'react';
-// import { Alert } from "react-native";
+import React from "react";
 
-class Intro extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            latitude: null,
-            longitude: null,
-            error: null,
-        };
-
-        this.handleClick = this.handleClick.bind(this);
-    }
-
-    // componentDidMount() {
-    //     this.handleClick()
-    //   }
-
-    handleClick = () => {
+function Intro({ onPlaceSelected }) {
+  return (
+    <button
+      className="locate"
+      onClick={() => {
         navigator.geolocation.getCurrentPosition(
           (position) => {
-            this.setState({
-                latitude: position.coords.latitude,
-                longitude: position.coords.longitude,
-                error: null,
+            onPlaceSelected({
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
             });
+            console.log(position);
           },
-          (error) => this.setState({ error: error.message}),
-          { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+          () => null
         );
-      };
-
-    render(){
-        return (
-            <div>
-                <button onClick={this.handleClick}>Get Location!</button>
-                <p>latitude={this.state.latitude}</p> 
-                <p>longitude={this.state.longitude}</p> 
-                <p>error={this.state.error}</p> 
-            </div>
-        );
-    }
+      }}
+    >
+      <img src="https://img.icons8.com/doodle/48/000000/compass--v1.png" />
+    </button>
+  );
 }
 
-  
 export default Intro;

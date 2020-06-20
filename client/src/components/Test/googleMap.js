@@ -3,6 +3,7 @@ import React from "react";
 import { apiKey } from "./API_KEY.js";
 import { Config } from "../../config";
 import Search from "../Search/Search";
+import Intro from "./intro.js";
 
 const {
   compose,
@@ -142,6 +143,7 @@ class TestMap extends React.PureComponent {
 
     return (
       <>
+        <Intro onPlaceSelected={this.onPlaceSelected} />
         <Search onPlaceSelected={this.onPlaceSelected} />
         <StyledMapWithAnInfoBox
           markers={this.state.markers}
