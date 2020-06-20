@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import { DropdownButton, ButtonGroup, Dropdown } from 'react-bootstrap';
 import './menu.sass';
 import { GiCctvCamera } from "react-icons/gi";
+
+const fetch = require("isomorphic-fetch");
+
 class Menu extends Component {
 
   render(){
@@ -11,22 +14,22 @@ class Menu extends Component {
           <li> <img src="./menuImg/resized/menu.png" />
             <ul class="drop-menu menu1">
               <li>
-                <button>
+                <button onClick={this.props.menuClick.bind(this, 0)}>
                   <img src="./menuImg/resized/bellPin.png" />
                 </button>
               </li>
               <li>
-                <button>
+                <button onClick={this.props.menuClick.bind(this, 1)}>
                   <img src="./menuImg/resized/policeStationPin.png" />
                 </button>
               </li>
               <li>
-                <button>
+                <button onClick={this.props.menuClick.bind(this, 2)}>
                   <img src="./menuImg/resized/lightPin.png" />
                 </button>
               </li>
               <li>
-                <button>
+                <button onClick={this.props.menuClick.bind(this, 3)}>
                   <img src="./menuImg/resized/cctvPin_.png" />
                 </button>
               </li>
