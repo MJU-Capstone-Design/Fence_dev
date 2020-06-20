@@ -16,9 +16,11 @@ const {
 const { FaAnchor } = require("react-icons/fa");
 const fetch = require("isomorphic-fetch");
 const { MarkerClusterer } = require("react-google-maps/lib/components/addons/MarkerClusterer");
-var markerPolice = require('./pinImage/policeStationPin2.png');
-var markerLight = require('./pinImage/lightPin2.png');
-var markerCCTV = require('./pinImage/cctvPin2.png');
+var markerPolice = require('./pinImage/policeStationPin.png');
+var markerLight = require('./pinImage/lightPin.png');
+var markerCCTV = require('./pinImage/cctvPin.png');
+var markerBell = require('./pinImage/bellPin.png');
+var ICON
 const cctv = '/api/cctvs';
 const light = '/api/lights';
 const police = '/api/polices';
@@ -50,22 +52,7 @@ const GoogleMapWithPins = compose(
     onMarkerClick: () => (marker) => {
       marker.isOpen = !marker.isOpen 
       console.log(marker)
-    },
-    // menuClick: (props) => () => {
-    //   console.log("??")
-    //   const cctv = '/api/cctvs';
-    //   const light = '/api/lights';
-    //   const police = '/api/polices';
-    //   const bell = '/api/bells';
-    //   fetch(cctv)
-    //     .then(res => res.json())
-    //     .then(data => {
-    //       console.log("menue click")
-    //       console.log(data)
-    //       props.setMarkers(data)
-    //     });
-    // }
-    
+    }
   }),
   withScriptjs,
   withGoogleMap
@@ -73,7 +60,7 @@ const GoogleMapWithPins = compose(
   <GoogleMap
     defaultZoom={11}
     defaultCenter={{lat: 37.637559, lng: 126.988260 }}
-    options={{maxZoom:18}}
+    options={{maxZoom:20}}
   >
     {console.log("pros : ", props)}  
     <MarkerClusterer
@@ -88,12 +75,13 @@ const GoogleMapWithPins = compose(
           // onClick={props.onMarkerClick}
           key={idx}
           position={{ lat: marker.lat, lng: marker.lng }}
-          icon={{ url: markerCCTV }}
+          icon={{ url: ICON }}
         />
       ))}
     </MarkerClusterer>
     <MapControler position={google.maps.ControlPosition.RIGHT_TOP}>
-      <Menu menuClick={props.menuClick}/>
+      <Menu 
+        menuClick={props.menuClick}/>
     </MapControler>
   </GoogleMap>
 );
@@ -109,8 +97,10 @@ class Map extends React.PureComponent {
     console.log("componentDidMount")
   }
   menuClick = (e) => {
-    var menuIcon = [cctv, light, police, bell]
+    var menuIcon = [bell, police, light, cctv]
+    var icons = [markerBell, markerPolice, markerLight, markerCCTV]
     console.log("menu Click-->" + e)
+    ICON = icons[e]
     fetch(menuIcon[e])
       .then(res => res.json())
       .then(data => {
@@ -120,10 +110,11 @@ class Map extends React.PureComponent {
       });
   }
 
-  delayedShowMarker = () => {
+
+  delayedMarking = () => {
     setTimeout(() => {
-      this.setState({ isMarkerShown: true })
-    }, 3000)
+      this.setState({ markers: [] })
+  }, 10000)
   }
 
   handleMarkerClick = () => {
@@ -140,7 +131,6 @@ class Map extends React.PureComponent {
           menuClick={this.menuClick}
           // onMarkerClick={this.handleMarkerClick}
           />
-        {/* <Menu /> */}
       </div>
       
     )
