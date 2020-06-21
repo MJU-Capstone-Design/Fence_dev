@@ -14,7 +14,7 @@ import {
 } from "@reach/combobox";
 import "@reach/combobox/styles.css";
 
-import styled from "styled-components";
+// import styled from "styled-components";
 
 function Search({ onPlaceSelected }) {
   const {

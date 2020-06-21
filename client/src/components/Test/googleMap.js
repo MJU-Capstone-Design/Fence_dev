@@ -4,6 +4,8 @@ import { apikey } from './API_KEY.js';
 import { Config } from '../../config';
 import Menu from "./menu.js";
 import MapControler from "./mapControler.js";
+import Intro from "./intro.js";
+import Search from "../Search/Search.js";
 
 const { compose, withState, lifecycle, withProps, withHandlers, withStateHandlers } = require("recompose");
 const {
