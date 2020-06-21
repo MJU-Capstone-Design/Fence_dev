@@ -11,3 +11,41 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.search {
+  position: absolute;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 400px;
+  z-index: 10;
+}
+.search input {
+  padding: 0.5rem;
+  font-size: 1.5rem;
+  width: 100%;
+  line-height: 1.2;
+  /* padding: 0.9rem 1.15rem; */
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(187, 187, 187);
+  border-image: initial;
+  border-radius: 8px;
+  outline: none;
+}
+
+.locate {
+  position: absolute;
+  top: 1rem;
+  right: 32%;
+  background: none;
+  border: none;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+
+.locate img {
+  width: 50px;
+  cursor: pointer;
+}

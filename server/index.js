@@ -11,12 +11,44 @@ app.listen(port, () =>
   console.log(`Example app listening at http://localhost:${port}`)
 );
 
-
-app.get("/api/users", function (req, res) {
-  var queryString = "SELECT * FROM users";
+app.get("/api/lights", (req, res) => {
+  console.log("come in /api/light")
+  var queryString = "SELECT * FROM 방법등가로등 limit 50";
 
   connection.query(queryString, function (err, rows, field) {
     if (err) throw err;
+    // console.log(rows)
+    res.json(rows);
+  });
+})
+
+app.get("/api/cctvs", function (req, res) {
+  console.log("come in /api/cctv")
+  // var queryString = "SELECT * FROM CCTV limit 50";
+  var queryString = "SELECT * FROM CCTV";
+  connection.query(queryString, function (err, rows, field) {
+    if (err) throw err;
+    // console.log(rows)
+    res.json(rows);
+  });
+});
+
+app.get("/api/polices", function (req, res) {
+  console.log("come in /api/polices")
+  var queryString = "SELECT * FROM 치안시설 limit 50";
+  connection.query(queryString, function (err, rows, field) {
+    if (err) throw err;
+    // console.log(rows)
+    res.json(rows);
+  });
+});
+
+app.get("/api/bells", function (req, res) {
+  console.log("come in /api/bells")
+  var queryString = "SELECT * FROM 안전비상벨 limit 50";
+  connection.query(queryString, function (err, rows, field) {
+    if (err) throw err;
+    // console.log(rows)
     res.json(rows);
   });
 });
