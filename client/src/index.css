@@ -13,23 +13,23 @@ code {
 }
 
 .search {
-  position: absolute;
-  top: 1rem;
-  left: 50%;
-  transform: translateX(-50%);
   width: 100%;
-  max-width: 400px;
+  max-width: 1200px;
   z-index: 10;
+  display: block;
+  margin: 0 auto;
+  margin-bottom: 1rem;
 }
+
 .search input {
   padding: 0.5rem;
   font-size: 1.5rem;
   width: 100%;
   line-height: 1.2;
-  /* padding: 0.9rem 1.15rem; */
+  background-color: rgb(240, 240, 240);
   border-width: 1px;
   border-style: solid;
-  border-color: rgb(187, 187, 187);
+  border-color: rgb(240, 240, 240);
   border-image: initial;
   border-radius: 8px;
   outline: none;
@@ -37,15 +37,16 @@ code {
 
 .locate {
   position: absolute;
-  top: 1rem;
-  right: 32%;
+  padding-top: 1em;
+  /* top: 1rem;
+  right: 32%; */
   background: none;
   border: none;
-  transform: translateX(-50%);
-  z-index: 10;
+  z-index: 1;
+  display: inline-block;
 }
 
 .locate img {
-  width: 50px;
+  width: 60px;
   cursor: pointer;
 }

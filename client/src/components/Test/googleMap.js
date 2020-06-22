@@ -1,13 +1,21 @@
 /*global google*/
 import React from "react";
-import { apikey } from "./API_KEY.js";
+import { api_key } from "./API_KEY.js";
 import { Config } from "../../config";
 import Search from "../Search/Search";
 import Intro from "./intro.js";
 import Menu from "./menu.js";
 import MapControler from "./mapControler.js";
+import Header from "../Header/Header";
 
-const { compose, withState, lifecycle, withProps, withHandlers, withStateHandlers } = require("recompose");
+const {
+  compose,
+  withState,
+  lifecycle,
+  withProps,
+  withHandlers,
+  withStateHandlers,
+} = require("recompose");
 const {
   withScriptjs,
   withGoogleMap,
@@ -17,22 +25,24 @@ const {
 } = require("react-google-maps");
 const { FaAnchor } = require("react-icons/fa");
 const fetch = require("isomorphic-fetch");
-const { MarkerClusterer } = require("react-google-maps/lib/components/addons/MarkerClusterer");
-var markerPolice = require('./pinImage/policeStationPin.png');
-var markerLight = require('./pinImage/lightPin.png');
-var markerCCTV = require('./pinImage/cctvPin.png');
-var markerBell = require('./pinImage/bellPin.png');
-var ICON
-const cctv = '/api/cctvs';
-const light = '/api/lights';
-const police = '/api/polices';
-const bell = '/api/bells';
+const {
+  MarkerClusterer,
+} = require("react-google-maps/lib/components/addons/MarkerClusterer");
+var markerPolice = require("./pinImage/policeStationPin.png");
+var markerLight = require("./pinImage/lightPin.png");
+var markerCCTV = require("./pinImage/cctvPin.png");
+var markerBell = require("./pinImage/bellPin.png");
+var ICON;
+const cctv = "/api/cctvs";
+const light = "/api/lights";
+const police = "/api/polices";
+const bell = "/api/bells";
 
 const { InfoBox } = require("react-google-maps/lib/components/addons/InfoBox");
 const GoogleMapWithPins = compose(
   // withState('markers', 'setMarkers', []),
   withProps({
-    googleMapURL: `https://maps.googleapis.com/maps/api/js?key=AIzaSyCR1rDuOlia0H31k6leLQaeY_sMoOJoo2A&v=3.exp&libraries=geometry,drawing,places`,
+    googleMapURL: `https://maps.googleapis.com/maps/api/js?key=${api_key}&v=3.exp&libraries=geometry,drawing,places`,
     loadingElement: <div style={{ height: `100%` }} />,
     containerElement: <div style={{ height: `800px` }} />,
     mapElement: <div style={{ height: `100%` }} />,
@@ -56,22 +66,23 @@ const GoogleMapWithPins = compose(
     onMarkerClick: () => (marker) => {
       marker.isOpen = !marker.isOpen;
       console.log(marker);
-    }
+    },
   }),
   withScriptjs,
   withGoogleMap
 )((props) => (
-  <GoogleMap 
-    center={props.center} 
-    zoom={props.zoom} 
-    options={{ maxZoom: 18 }}>
-{/* )(props =>
+  <GoogleMap
+    center={props.center}
+    zoom={props.zoom}
+    options={{ maxZoom: 18, disableDefaultUI: true, zoomControl: true }}
+  >
+    {/* )(props =>
   <GoogleMap
     defaultZoom={11}
     defaultCenter={{lat: 37.637559, lng: 126.988260 }}
     options={{maxZoom:20}}
   > */}
-    {console.log("pros : ", props)}  
+    {console.log("pros : ", props)}
     <MarkerClusterer
       onClick={props.onMarkerClustererClick}
       averageCenter
@@ -89,8 +100,7 @@ const GoogleMapWithPins = compose(
       ))}
     </MarkerClusterer>
     <MapControler position={google.maps.ControlPosition.RIGHT_TOP}>
-      <Menu 
-        menuClick={props.menuClick}/>
+      <Menu menuClick={props.menuClick} />
     </MapControler>
   </GoogleMap>
 ));
@@ -110,8 +120,6 @@ class Map extends React.PureComponent {
   };
 
   onPlaceSelected = ({ lat, lng }) => {
-    const { mapPosition, center } = this.state;
-
     this.setState({
       mapPosition: { lat: lat, lng: lng },
       center: { lat: lat, lng: lng },
@@ -123,24 +131,24 @@ class Map extends React.PureComponent {
     this.setState({ markers: [] });
   }
   componentDidMount() {
-    console.log("componentDidMount")
+    console.log("componentDidMount");
   }
   menuClick = (e) => {
-    this.handleMarkerClick()
+    this.handleMarkerClick();
     // this.setState({ markers: [] })
 
-    var menuIcon = [bell, police, light, cctv]
-    var icons = [markerBell, markerPolice, markerLight, markerCCTV]
-    console.log("menu Click-->" + e)
-    ICON = icons[e]
+    var menuIcon = [bell, police, light, cctv];
+    var icons = [markerBell, markerPolice, markerLight, markerCCTV];
+    console.log("menu Click-->" + e);
+    ICON = icons[e];
     fetch(menuIcon[e])
-      .then(res => res.json())
-      .then(data => {
-        console.log("menue click")
-        console.log(data)
-        this.setState({ markers: data })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("menue click");
+        console.log(data);
+        this.setState({ markers: data });
       });
-  }
+  };
 
   delayedShowMarker = () => {
     setTimeout(() => {
@@ -149,9 +157,8 @@ class Map extends React.PureComponent {
   };
 
   handleMarkerClick = () => {
-    // this.setState({ isMarkerShown: false });
-    this.setState({ isMarkerShown: false,
-                    markers: [] });
+    this.setState({ isMarkerShown: false });
+    this.setState({ isMarkerShown: false, markers: [] });
 
     this.delayedShowMarker();
   };
@@ -162,19 +169,19 @@ class Map extends React.PureComponent {
 
     return (
       <>
-        <Intro onPlaceSelected={this.onPlaceSelected} />
+        <Header />
         <Search onPlaceSelected={this.onPlaceSelected} />
+        <Intro onPlaceSelected={this.onPlaceSelected} />
         <GoogleMapWithPins
           markers={this.state.markers}
           isMarkerShown={this.state.isMarkerShown}
           menuClick={this.menuClick}
-          // onMarkerClick={this.handleMarkerClick}
+          onMarkerClick={this.handleMarkerClick}
           center={center}
           zoom={zoom}
-          />
+        />
       </>
-      
-    )
+    );
   }
 }
-export default Map
+export default Map;
