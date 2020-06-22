@@ -1,0 +1,127 @@
+nav
+  padding: 5px
+  text-align: center
+  /* dropdown시 position이랑 bottom 삭제 */
+  // position: fixed
+  // bottom: 30px
+  // bottom: 0
+  // right: 0
+  
+  > ul
+    list-style: none
+    padding: 0
+    margin: 0
+    display: inline-block
+    // background: #ffffff
+    border-radius: 5px
+    
+    > li
+      float: left
+      width: 50px
+      height: 50px
+      line-height: 65px
+      /* dropdown시에는 relativessss가 나은거같음 */
+      /* position: relativessss */
+      position: relativessss
+      list-style-image: './marker.png'
+      text-transform: uppercase
+      font-size: 14px
+      color: rgba(0,0,0,0.7)
+      cursor: pointer
+        
+      > img
+        width: 40px
+        height: 40px
+        padding: 5px
+
+      &:hover
+        background: #ff00003c
+        border-radius: 25px
+        
+        
+
+ul.drop-menu
+  position: absolute
+  /* dropup시에는 nav위치를 지정하고  */
+  /* 여기의 bottom을 조정하여 dropup으로 만들 수 있음 */
+  /* dropup 시에는 bottom을 지우고 top: 100% 해주면 됨 */
+  // bottom: 52px
+  // top: 100%
+  top: 53px
+  left: 5px
+  right: 0
+  width: 50px
+  padding: 0
+  margin: 0
+  
+  li
+    // background: #666
+    // color: rgba(255,255,255,0.7)
+    width: 50px
+    height: 50px
+    // padding-bottom: 10px
+    border-radius: 25px
+
+    &:hover
+      background: #6200ff27
+      border: 10px
+      
+    // &:last-child
+    //   border-radius: 0px 0px 5px 5px
+    //   border-radius: 25px
+    
+    > button
+      border: 0
+      padding: 0
+      background:  #00000000
+      width: 50px
+      height: 50px
+      border-radius: 25px
+
+      > img
+        width: 40px
+        height: 40px
+
+
+// Default Trigger    
+
+ul.drop-menu li
+  display: none // HIDE
+
+li:hover > ul.drop-menu li
+  display: block // SHOW
+    
+
+
+
+
+
+// MENU 1 ---------------
+
+/* dropdown 시에는 &:nth-child() 로 수정해줄 것 */
+li:hover > ul.drop-menu.menu1 
+  perspective: 1000px
+  
+  li
+    opacity: 0
+    transform-origin: top center
+  
+    @for $i from 1 through 6
+      &:nth-child(#{$i})
+        animation:
+          name: menu1
+          duration: 300ms
+          delay: (150ms * $i) - 300
+          timing-function: ease-in-out
+          fill-mode: forwards
+  
+      
+  
+@keyframes menu1
+  0%
+    opacity: 0
+    transform: rotateX(-90deg)
+    
+  100%
+    opacity: 1
+    transform: rotateX(0deg)
