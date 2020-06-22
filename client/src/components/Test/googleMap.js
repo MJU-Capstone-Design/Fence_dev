@@ -1,6 +1,6 @@
 /*global google*/
 import React from "react";
-import { apiKey } from "./API_KEY.js";
+import { apikey } from "./API_KEY.js";
 import { Config } from "../../config";
 import Search from "../Search/Search";
 import Intro from "./intro.js";
@@ -32,7 +32,7 @@ const { InfoBox } = require("react-google-maps/lib/components/addons/InfoBox");
 const GoogleMapWithPins = compose(
   // withState('markers', 'setMarkers', []),
   withProps({
-    googleMapURL: `https://maps.googleapis.com/maps/api/js?key=${apiKey}&v=3.exp&libraries=geometry,drawing,places`,
+    googleMapURL: `https://maps.googleapis.com/maps/api/js?key=AIzaSyCR1rDuOlia0H31k6leLQaeY_sMoOJoo2A&v=3.exp&libraries=geometry,drawing,places`,
     loadingElement: <div style={{ height: `100%` }} />,
     containerElement: <div style={{ height: `800px` }} />,
     mapElement: <div style={{ height: `100%` }} />,
@@ -56,7 +56,7 @@ const GoogleMapWithPins = compose(
     onMarkerClick: () => (marker) => {
       marker.isOpen = !marker.isOpen;
       console.log(marker);
-    },
+    }
   }),
   withScriptjs,
   withGoogleMap
@@ -79,7 +79,7 @@ const GoogleMapWithPins = compose(
       gridSize={60}
       minimumClusterSize={5}
     >
-      {props.isMarkerShown && props.markers.map((marker, idx) => (
+      {props.markers.map((marker, idx) => (
         <Marker
           // onClick={props.onMarkerClick}
           key={idx}
@@ -161,7 +161,7 @@ class Map extends React.PureComponent {
     const zoom = this.state.zoom;
 
     return (
-      <div id="mapWithMenu">
+      <>
         <Intro onPlaceSelected={this.onPlaceSelected} />
         <Search onPlaceSelected={this.onPlaceSelected} />
         <GoogleMapWithPins
@@ -172,7 +172,7 @@ class Map extends React.PureComponent {
           center={center}
           zoom={zoom}
           />
-      </div>
+      </>
       
     )
   }
