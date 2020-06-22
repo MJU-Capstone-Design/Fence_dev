@@ -70,7 +70,7 @@ const GoogleMapWithPins = compose(
       gridSize={60}
       minimumClusterSize={5}
     >
-      {props.markers.map((marker, idx) => (
+      {props.isMarkerShown && props.markers.map((marker, idx) => (
         <Marker
           // onClick={props.onMarkerClick}
           key={idx}
@@ -97,6 +97,9 @@ class Map extends React.PureComponent {
     console.log("componentDidMount")
   }
   menuClick = (e) => {
+    this.handleMarkerClick()
+    // this.setState({ markers: [] })
+
     var menuIcon = [bell, police, light, cctv]
     var icons = [markerBell, markerPolice, markerLight, markerCCTV]
     console.log("menu Click-->" + e)
@@ -110,17 +113,21 @@ class Map extends React.PureComponent {
       });
   }
 
-
-  delayedMarking = () => {
+  // handleMarkerClick = () => {
+  //   this.setState({ isMarkerShown: !this.state.isMarkerShown })
+  // }
+  delayedShowMarker = () => {
     setTimeout(() => {
-      this.setState({ markers: [] })
-  }, 10000)
-  }
+      this.setState({ isMarkerShown: true });
+    }, 3000);
+  };
 
   handleMarkerClick = () => {
-    this.setState({ isMarkerShown: false })
-    this.delayedShowMarker()
-  }
+    this.setState({ isMarkerShown: false,
+                    markers: [] });
+
+    this.delayedShowMarker();
+  };
 
   render() {
     return (
