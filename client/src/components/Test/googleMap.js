@@ -6,6 +6,7 @@ import Search from "../Search/Search";
 import Intro from "./intro.js";
 import Menu from "./menu.js";
 import MapControler from "./mapControler.js";
+import HelloInfo from "./hello.js";
 
 const { compose, withState, lifecycle, withProps, withHandlers, withStateHandlers } = require("recompose");
 const {
@@ -71,7 +72,17 @@ const GoogleMapWithPins = compose(
     defaultCenter={{lat: 37.637559, lng: 126.988260 }}
     options={{maxZoom:20}}
   > */}
-    {console.log("pros : ", props)}  
+    {console.log("pros : ", props)}
+    { <Marker 
+        position={props.center} 
+        onClick={props.onToggleOpen}>
+        {props.isOpen&& <HelloInfo 
+            onCloseClick = {props.onToggleOpen}
+            grade={}
+            cctv={}
+            light={}
+            bell={}/>}
+      </Marker> }  
     <MarkerClusterer
       onClick={props.onMarkerClustererClick}
       averageCenter
@@ -85,7 +96,8 @@ const GoogleMapWithPins = compose(
           key={idx}
           position={{ lat: marker.lat, lng: marker.lng }}
           icon={{ url: ICON }}
-        />
+          >
+        </Marker>
       ))}
     </MarkerClusterer>
     <MapControler position={google.maps.ControlPosition.RIGHT_TOP}>
@@ -107,6 +119,11 @@ class Map extends React.PureComponent {
       lng: 126.98826,
     },
     zoom: 12,
+    avg : {
+      cctv: 0,
+      light: 0,
+      bell: 0,
+    }
   };
 
   onPlaceSelected = ({ lat, lng }) => {
@@ -150,7 +167,7 @@ class Map extends React.PureComponent {
 
   handleMarkerClick = () => {
     // this.setState({ isMarkerShown: false });
-    this.setState({ isMarkerShown: false,
+    this.setState({ isMarkerShown: true,
                     markers: [] });
 
     this.delayedShowMarker();
