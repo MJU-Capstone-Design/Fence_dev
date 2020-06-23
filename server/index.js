@@ -54,30 +54,39 @@ app.get("/api/bells", function (req, res) {
 
 app.get("/api/info/:latlng", function (req, res) {
   console.log("come in /api/info")
-  var latlng = req.params.latlng
-  // lat, lng 분리 코드 필요
+  var latlng = req.params.latlng.split(',')
+  var lat = parseFloat(latlng[0])
+  var lng = parseFloat(latlng[1])
 
-  var query_bell = "SELECT * FROM 안전비상벨 limit 100";
-  var query_light = "SELECT * FROM 안전비상벨 limit 100";
-  var query_cctv = "SELECT * FROM 안전비상벨 limit 100";
+  var blat = lat - 0.001800
+  var ulat = lat + 0.001800
+  var blng = lng - 0.002250
+  var ulng = lng + 0.002250
+
+  var query_cctv = `SELECT sum(카메라대수) as cnt FROM cctv WHERE (lat BETWEEN ${blat} AND ${ulat}) AND (lng BETWEEN ${blng} AND ${ulng})`;
+  var query_light = `SELECT sum(num) as cnt FROM 방범등가로등 WHERE (lat BETWEEN ${blat} AND ${ulat}) AND (lng BETWEEN ${blng} AND ${ulng})`;
+  var query_bell = `SELECT count(*) as cnt FROM 안전비상벨 WHERE (lat BETWEEN ${blat} AND ${ulat}) AND (lng BETWEEN ${blng} AND ${ulng})`;
   var data = {
-    bell: 0,
+    cctv: 0,
     light: 0,
-    cctv: 0
+    bell: 0
   }
-  connection.query(query_bell, function (err, rows, field) {
-    if (err) throw err;
+  console.log(data)
+  connection.query(query_cctv, function (err, rows, field) {
     console.log(rows)
-    // data.bell = rows.~~~?
+    if (err) throw err;
+    data.cctv = rows.cnt;
   });
   connection.query(query_light, function (err, rows, field) {
+    console.log(rows)
     if (err) throw err;
-    // data.bell = rows.~~~?
-  });
-  connection.query(query_cctv, function (err, rows, field) {
+    data.light = rows.cnt;
+  })
+  connection.query(query_bell, function (err, rows, field) {
+    console.log(rows)
     if (err) throw err;
-    // data.bell = rows.~~~?
+    data.bell = rows.cnt;
   });
-  res.json(cmt)
+  res.json(data);
 });
 

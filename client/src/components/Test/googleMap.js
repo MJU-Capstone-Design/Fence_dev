@@ -72,6 +72,7 @@ const GoogleMapWithPins = compose(
     options={{ maxZoom: 18, disableDefaultUI: true, zoomControl: true }}
   >
     {console.log("pros : ", props)}
+
     { <Marker 
         position={props.center} 
         onClick={props.onToggleOpen}>
@@ -82,7 +83,8 @@ const GoogleMapWithPins = compose(
             // light={}
             // bell={}
             />}
-      </Marker> }  
+      </Marker> }
+
     <MarkerClusterer
       onClick={props.onMarkerClustererClick}
       averageCenter
@@ -139,8 +141,30 @@ class Map extends React.PureComponent {
   componentDidMount() {
     console.log("componentDidMount");
   }
+  // menuClick = async (e) => {
+  //   await this.clearOverlays();
+  //   await console.log(this.state.markers);
+  //   var menuIcon = [bell, police, light, cctv, demo];
+  //   var icons = [markerBell, markerPolice, markerLight, markerCCTV, markerDemo];
+  //   console.log("menu Click-->" + e);
+  //   ICON = icons[e];
+  //   await fetch(menuIcon[e])
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       console.log("menue click");
+  //       console.log(data);
+  //       this.setState({ markers: data });
+  //     });
+  // };
+
+  clearOverlays = () => {
+    this.state.markers = [];
+    console.log(this.state.markers);
+  };
+
   menuClick = (e) => {
     // kakao api part
+    var latlng = this.state.center
     var ps = new kakao.maps.services.Places(); 
     function placesSearchCB (data, status, pagination) {
       if (status === kakao.maps.services.Status.OK) {
@@ -153,8 +177,8 @@ class Map extends React.PureComponent {
     ps.keywordSearch('지구대', placesSearchCB); 
     
     // marker click event 부분
-    var lat = 3.3
-    var lng = 3.5
+    var lat = 37.553505
+    var lng = 126.98826
     var latlng = `${lat}, ${lng}`
     fetch(`/api/info/${latlng}`)
       .then(res => res.json())
