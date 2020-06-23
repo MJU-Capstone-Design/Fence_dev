@@ -83,6 +83,7 @@ class TestMap extends React.PureComponent {
     this.setState({ markers: [] })
   }
   componentDidMount() {
+// <<<<<<< Updated upstream
     this.delayedShowMarker()
     console.log("componentDidMount")
 
@@ -91,6 +92,27 @@ class TestMap extends React.PureComponent {
     const police = '/api/polices';
     const bell = '/api/bells';
     fetch(cctv)
+
+    console.log("componentDidMount");
+  }
+  menuClick = (e) => {
+    // kakao api part
+    var ps = new kakao.maps.services.Places(); 
+    function placesSearchCB (data, status, pagination) {
+      if (status === kakao.maps.services.Status.OK) {
+        for (var i=0; i<data.length; i++) {
+          console.log(data);
+          // bounds.extend(new kakao.maps.LatLng(data[i].y, data[i].x));
+        }       
+      } 
+    }
+    ps.keywordSearch('지구대', placesSearchCB); 
+    
+    // marker click event 부분
+    var lat = 3.3
+    var lng = 3.5
+    var latlng = `${lat},${lng}`
+    fetch(`/api/info/${latlng}`)
       .then(res => res.json())
       .then(data => {
         this.setState({ markers : data });
