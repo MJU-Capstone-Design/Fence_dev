@@ -162,24 +162,60 @@ class Map extends React.PureComponent {
     console.log(this.state.markers);
   };
 
-  menuClick = (e) => {
+  menuClick = async (e) => {
     // kakao api part
     var latlng = this.state.center
-    var ps = new kakao.maps.services.Places(); 
-    function placesSearchCB (data, status, pagination) {
-      if (status === kakao.maps.services.Status.OK) {
-        for (var i=0; i<data.length; i++) {
-          console.log(data);
-          // bounds.extend(new kakao.maps.LatLng(data[i].y, data[i].x));
-        }       
-      } 
+    var result = {
+      p: '', p_dis: 0,
+      j: '', j_dis: 0,
+      phone: ''
     }
-    ps.keywordSearch('지구대', placesSearchCB); 
-    
+    var ps = new kakao.maps.services.Places(); 
+    function callbacks_p (data, status, pagination) {
+      if (status === kakao.maps.services.Status.OK) {
+        console.log(data[0])
+        result.p = data[0].place_name
+        result.p_dis = data[0].distance
+      }
+    }
+    function callbacks_j (data, status, pagination) {
+      if (status === kakao.maps.services.Status.OK) {
+        console.log(data[0])
+        result.j = data[0].place_name
+        result.j_dis = data[0].distance
+      }
+    }
+    function callbacks_phone (data, status, pagination) {
+      if (status === kakao.maps.services.Status.OK) {
+        console.log(data[0])
+        result.phone = data[0].phone
+      }
+    }
+    var options_acc = {
+      location: new kakao.maps.LatLng(latlng.lat, latlng.lng),
+      sort: kakao.maps.services.SortBy.ACCURACY
+    }
+    var options_dis = {
+      location: new kakao.maps.LatLng(latlng.lat, latlng.lng),
+      sort: kakao.maps.services.SortBy.DISTANCE
+    }
+    ps.keywordSearch('지구대', callbacks_j, options_acc)
+    ps.keywordSearch('파출소', callbacks_p, options_acc)
+    ps.keywordSearch('주민센터', callbacks_phone, options_dis)
+
+    setTimeout(() => {
+      console.log('api/findRank')
+      fetch()
+        .then((res) => res.json())
+        .then((data) => {
+          console.log("치안등급 데이터 : ", data);
+          // this.setState({ markers: data });
+        });
+    }, 3000);
+
     // marker click event 부분
-    var lat = 37.553505
-    var lng = 126.98826
-    var latlng = `${lat}, ${lng}`
+    var location = this.state.center
+    var latlng = `${location.lat}, ${location.lng}`
     fetch(`/api/info/${latlng}`)
       .then(res => res.json())
       .then(data => {
