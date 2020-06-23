@@ -58,10 +58,7 @@ app.get("/api/info/:latlng", function (req, res) {
   var lat = parseFloat(latlng[0])
   var lng = parseFloat(latlng[1])
 
-  var blat = lat - 0.001800
-  var ulat = lat + 0.001800
-  var blng = lng - 0.002250
-  var ulng = lng + 0.002250
+  var blat = lat - 0.001800, ulat = lat + 0.001800, blng = lng - 0.002250, ulng = lng + 0.002250
 
   var query_cctv = `SELECT sum(카메라대수) as cnt FROM cctv WHERE (lat BETWEEN ${blat} AND ${ulat}) AND (lng BETWEEN ${blng} AND ${ulng})`;
   var query_light = `SELECT sum(num) as cnt FROM 방범등가로등 WHERE (lat BETWEEN ${blat} AND ${ulat}) AND (lng BETWEEN ${blng} AND ${ulng})`;
