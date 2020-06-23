@@ -3,10 +3,11 @@ import React from "react";
 import { apikey } from "./API_KEY.js";
 import { Config } from "../../config";
 import Search from "../Search/Search";
-import Intro from "./intro.js";
+import Intro from "./intro.js"
 import Menu from "./menu.js";
 import MapControler from "./mapControler.js";
 
+const { kakao } = window;
 const { compose, withState, lifecycle, withProps, withHandlers, withStateHandlers } = require("recompose");
 const {
   withScriptjs,
@@ -65,12 +66,6 @@ const GoogleMapWithPins = compose(
     center={props.center} 
     zoom={props.zoom} 
     options={{ maxZoom: 18 }}>
-{/* )(props =>
-  <GoogleMap
-    defaultZoom={11}
-    defaultCenter={{lat: 37.637559, lng: 126.988260 }}
-    options={{maxZoom:20}}
-  > */}
     {console.log("pros : ", props)}  
     <MarkerClusterer
       onClick={props.onMarkerClustererClick}
@@ -79,7 +74,7 @@ const GoogleMapWithPins = compose(
       gridSize={60}
       minimumClusterSize={5}
     >
-      {props.markers.map((marker, idx) => (
+      {props.markers && props.markers.map((marker, idx) => (
         <Marker
           // onClick={props.onMarkerClick}
           key={idx}
@@ -127,8 +122,31 @@ class Map extends React.PureComponent {
   }
   menuClick = (e) => {
     this.handleMarkerClick()
-    // this.setState({ markers: [] })
+    this.setState({ markers: [] })
 
+    // kakao api part
+    var ps = new kakao.maps.services.Places(); 
+    function placesSearchCB (data, status, pagination) {
+      if (status === kakao.maps.services.Status.OK) {
+        for (var i=0; i<data.length; i++) {
+          console.log(data);
+          // bounds.extend(new kakao.maps.LatLng(data[i].y, data[i].x));
+        }       
+      } 
+    }
+    ps.keywordSearch('지구대', placesSearchCB); 
+    
+    // marker click event 부분
+    var lat = 3.3
+    var lng = 3.5
+    var latlng = `${lat}, ${lng}`
+    fetch(`/api/info/${latlng}`)
+      .then(res => res.json())
+      .then(data => {
+        console.log(data)
+      })
+
+    // menu icon click part
     var menuIcon = [bell, police, light, cctv]
     var icons = [markerBell, markerPolice, markerLight, markerCCTV]
     console.log("menu Click-->" + e)

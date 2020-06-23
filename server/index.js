@@ -51,3 +51,33 @@ app.get("/api/bells", function (req, res) {
     res.json(rows);
   });
 });
+
+app.get("/api/info/:latlng", function (req, res) {
+  console.log("come in /api/info")
+  var latlng = req.params.latlng
+  // lat, lng 분리 코드 필요
+
+  var query_bell = "SELECT * FROM 안전비상벨 limit 100";
+  var query_light = "SELECT * FROM 안전비상벨 limit 100";
+  var query_cctv = "SELECT * FROM 안전비상벨 limit 100";
+  var data = {
+    bell: 0,
+    light: 0,
+    cctv: 0
+  }
+  connection.query(query_bell, function (err, rows, field) {
+    if (err) throw err;
+    console.log(rows)
+    // data.bell = rows.~~~?
+  });
+  connection.query(query_light, function (err, rows, field) {
+    if (err) throw err;
+    // data.bell = rows.~~~?
+  });
+  connection.query(query_cctv, function (err, rows, field) {
+    if (err) throw err;
+    // data.bell = rows.~~~?
+  });
+  res.json(cmt)
+});
+
