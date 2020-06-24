@@ -1,9 +1,5 @@
 import React, { Component } from 'react';
-import { DropdownButton, ButtonGroup, Dropdown } from 'react-bootstrap';
 import './menu.sass';
-import { GiCctvCamera } from "react-icons/gi";
-
-const fetch = require("isomorphic-fetch");
 
 class Menu extends Component {
 
@@ -11,26 +7,26 @@ class Menu extends Component {
     return (
       <nav id="menuWithButton">
         <ul>
-          <li> <img src="./menuImg/resized/menu.png" />
+          <li> <img src="./menuImg/resized/menu.png" alt="menu" />
             <ul class="drop-menu menu1">
               <li>
                 <button onClick={this.props.menuClick.bind(this, 0)}>
-                  <img src="./menuImg/resized/bellPin.png" />
+                  <img src="./menuImg/resized/bellPin.png" alt="안전비상벨" />
                 </button>
               </li>
               <li>
                 <button onClick={this.props.menuClick.bind(this, 1)}>
-                  <img src="./menuImg/resized/policeStationPin.png" />
+                  <img src="./menuImg/resized/policeStationPin.png" alt="치안시설" />
                 </button>
               </li>
               <li>
                 <button onClick={this.props.menuClick.bind(this, 2)}>
-                  <img src="./menuImg/resized/lightPin.png" />
+                  <img src="./menuImg/resized/lightPin.png" alt="보안등" />
                 </button>
               </li>
               <li>
                 <button onClick={this.props.menuClick.bind(this, 3)}>
-                  <img src="./menuImg/resized/cctvPin_.png" />
+                  <img src="./menuImg/resized/cctvPin_.png" alt="cctv" />
                 </button>
               </li>
             </ul>

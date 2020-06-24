@@ -55,11 +55,12 @@ app.get("/api/bells", function (req, res) {
 app.get("/api/findRank", function (req, res) {
   console.log("come in /api/findRank")
   // var queryString = "SELECT * FROM 안전비상벨 limit 100";
-  connection.query(queryString, function (err, rows, field) {
-    console.log(rows)
-    if (err) throw err;
-    res.json(rows);
-  });
+  // connection.query(queryString, function (err, rows, field) {
+  //   console.log(rows)
+  //   if (err) throw err;
+  //   res.json(rows);
+  // });
+  res.json('{result: is Not implemented}');
 });
 
 app.get("/api/info/:latlng", function (req, res) {

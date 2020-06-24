@@ -1,7 +1,6 @@
 /*global google*/
 import React from "react";
 import { apikey } from "./API_KEY.js";
-import { Config } from "../../config";
 import Search from "../Search/Search";
 import Intro from "./intro.js"
 import Menu from "./menu.js";
@@ -10,7 +9,7 @@ import Header from "../Header/Header";
 import HelloInfo from "./hello.js";
 
 const { kakao } = window;
-const { compose, withState, lifecycle, withProps, withHandlers, withStateHandlers } = require("recompose");
+const { compose, withProps, withHandlers, withStateHandlers } = require("recompose");
 const {
   withScriptjs,
   withGoogleMap,
@@ -35,7 +34,6 @@ const bell = "/api/bells";
 
 const { InfoBox } = require("react-google-maps/lib/components/addons/InfoBox");
 const GoogleMapWithPins = compose(
-  // withState('markers', 'setMarkers', []),
   withProps({
     googleMapURL: `https://maps.googleapis.com/maps/api/js?key=${apikey}&v=3.exp&libraries=geometry,drawing,places`,
     loadingElement: <div style={{ height: `100%` }} />,
@@ -83,7 +81,7 @@ const GoogleMapWithPins = compose(
             // light={}
             // bell={}
             />}
-      </Marker> }
+    </Marker> }
 
     <MarkerClusterer
       onClick={props.onMarkerClustererClick}
@@ -92,14 +90,15 @@ const GoogleMapWithPins = compose(
       gridSize={60}
       minimumClusterSize={5}
     >
-      {props.markers && props.markers.map((marker, idx) => (
-        <Marker
-          // onClick={props.onMarkerClick}
-          key={idx}
-          position={{ lat: marker.lat, lng: marker.lng }}
-          icon={{ url: ICON }}
-          >
-        </Marker>
+      {props.markers.map((marker, idx) => (
+        props.isMarkerShown && 
+          <Marker
+            // onClick={props.onMarkerClick}
+            key={idx}
+            position={{ lat: marker.lat, lng: marker.lng }}
+            icon={{ url: ICON }}
+            >
+          </Marker>
       ))}
     </MarkerClusterer>
     <MapControler position={google.maps.ControlPosition.RIGHT_TOP}>
@@ -136,107 +135,112 @@ class Map extends React.PureComponent {
   };
 
   componentWillMount() {
-    this.setState({ markers: [] });
+    this.setState({ markers: [],
+    e: 5 });
   }
   componentDidMount() {
     console.log("componentDidMount");
   }
-  // menuClick = async (e) => {
-  //   await this.clearOverlays();
-  //   await console.log(this.state.markers);
-  //   var menuIcon = [bell, police, light, cctv, demo];
-  //   var icons = [markerBell, markerPolice, markerLight, markerCCTV, markerDemo];
-  //   console.log("menu Click-->" + e);
-  //   ICON = icons[e];
-  //   await fetch(menuIcon[e])
-  //     .then((res) => res.json())
-  //     .then((data) => {
-  //       console.log("menue click");
-  //       console.log(data);
-  //       this.setState({ markers: data });
-  //     });
-  // };
 
-  clearOverlays = () => {
-    this.state.markers = [];
-    console.log(this.state.markers);
-  };
-
-  menuClick = async (e) => {
-    // kakao api part
-    var latlng = this.state.center
-    var result = {
-      p: '', p_dis: 0,
-      j: '', j_dis: 0,
-      phone: ''
-    }
-    var ps = new kakao.maps.services.Places(); 
-    function callbacks_p (data, status, pagination) {
-      if (status === kakao.maps.services.Status.OK) {
-        console.log(data[0])
-        result.p = data[0].place_name
-        result.p_dis = data[0].distance
-      }
-    }
-    function callbacks_j (data, status, pagination) {
-      if (status === kakao.maps.services.Status.OK) {
-        console.log(data[0])
-        result.j = data[0].place_name
-        result.j_dis = data[0].distance
-      }
-    }
-    function callbacks_phone (data, status, pagination) {
-      if (status === kakao.maps.services.Status.OK) {
-        console.log(data[0])
-        result.phone = data[0].phone
-      }
-    }
-    var options_acc = {
-      location: new kakao.maps.LatLng(latlng.lat, latlng.lng),
-      sort: kakao.maps.services.SortBy.ACCURACY
-    }
-    var options_dis = {
-      location: new kakao.maps.LatLng(latlng.lat, latlng.lng),
-      sort: kakao.maps.services.SortBy.DISTANCE
-    }
-    ps.keywordSearch('지구대', callbacks_j, options_acc)
-    ps.keywordSearch('파출소', callbacks_p, options_acc)
-    ps.keywordSearch('주민센터', callbacks_phone, options_dis)
-
-    setTimeout(() => {
-      console.log('api/findRank')
-      fetch()
-        .then((res) => res.json())
-        .then((data) => {
-          console.log("치안등급 데이터 : ", data);
-          // this.setState({ markers: data });
-        });
-    }, 3000);
-
-    // marker click event 부분
-    var location = this.state.center
-    var latlng = `${location.lat}, ${location.lng}`
-    fetch(`/api/info/${latlng}`)
-      .then(res => res.json())
-      .then(data => {
-        console.log(data)
-      })
-
+  showIcon = async (e) => {
     // menu icon click part
-    this.handleMarkerClick()
-    this.setState({ markers: [] })
-
+    this.forceUpdate();
     var menuIcon = [bell, police, light, cctv]
     var icons = [markerBell, markerPolice, markerLight, markerCCTV]
     console.log("menu Click-->" + e)
     ICON = icons[e]
     fetch(menuIcon[e])
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("menue click");
-        console.log(data);
-        this.setState({ markers: data });
-      });
+    .then((res) => res.json())
+    .then((data) => {
+      console.log("menue click");
+      this.setState({ markers: data, isMarkerShown: true});
+    });
+  }
+  menuClick = async (e) => {
+    await this.showIcon(e)
+    // // menu icon click part
+    // var menuIcon = [bell, police, light, cctv]
+    // var icons = [markerBell, markerPolice, markerLight, markerCCTV]
+    // console.log("menu Click-->" + e)
+    // ICON = icons[e]
+
+    // await this.clearOverlays();
+    // fetch(menuIcon[e])
+    // .then((res) => res.json())
+    // .then((data) => {
+    //   console.log("menue click");
+    //   this.setState({ markers: data, isMarkerShown: true});
+    // });
+    // this.setState({ markers: [], e: e, isMarkerShown: true }, () => {
+    //   console.log('다른 아이콘 클릭');
+    //   console.log('state : ', this.state.markers);
+    //   fetch(menuIcon[e])
+    //   .then((res) => res.json())
+    //   .then((data) => {
+    //     console.log("menue click");
+    //     this.setState({ markers: data });
+    //   });
+    // })
+
+    
+    // // kakao api part
+    // var latlng = this.state.center
+    // var result = {
+    //   p: '', p_dis: 0,
+    //   j: '', j_dis: 0,
+    //   phone: ''
+    // }
+    // var ps = new kakao.maps.services.Places(); 
+    // function callbacks_p (data, status, pagination) {
+    //   if (status === kakao.maps.services.Status.OK) {
+    //     console.log(data[0])
+    //     result.p = data[0].place_name
+    //     result.p_dis = data[0].distance
+    //   }
+    // }
+    // function callbacks_j (data, status, pagination) {
+    //   if (status === kakao.maps.services.Status.OK) {
+    //     console.log(data[0])
+    //     result.j = data[0].place_name
+    //     result.j_dis = data[0].distance
+    //   }
+    // }
+    // function callbacks_phone (data, status, pagination) {
+    //   if (status === kakao.maps.services.Status.OK) {
+    //     console.log(data[0])
+    //     result.phone = data[0].phone
+    //   }
+    // }
+    // var options_acc = {
+    //   location: new kakao.maps.LatLng(latlng.lat, latlng.lng),
+    //   sort: kakao.maps.services.SortBy.ACCURACY
+    // }
+    // var options_dis = {
+    //   location: new kakao.maps.LatLng(latlng.lat, latlng.lng),
+    //   sort: kakao.maps.services.SortBy.DISTANCE
+    // }
+    // ps.keywordSearch('지구대', callbacks_j, options_acc)
+    // ps.keywordSearch('파출소', callbacks_p, options_acc)
+    // ps.keywordSearch('주민센터', callbacks_phone, options_dis)
+
+    // setTimeout(() => {
+    //   console.log('/api/findRank')
+    //   fetch('/api/findRank')
+    //     .then((res) => res.json())
+    //     .then((data) => {
+    //       console.log("치안등급 데이터 : ", data);
+    //       // this.setState({ markers: data });
+    //     });
+    // }, 3000);
+
+    // // marker click event 부분
+    // var location = this.state.center
+    // var latlng = `${location.lat}, ${location.lng}`
+    // fetch(`/api/info/${latlng}`)
+    //   .then(res => res.json())
+    //   .then(data => {
+    //     console.log(data)
+    //   })
   };
 
   delayedShowMarker = () => {
@@ -248,7 +252,6 @@ class Map extends React.PureComponent {
   handleMarkerClick = () => {
     // this.setState({ isMarkerShown: false });
     this.setState({ isMarkerShown: true, markers: [] });
-
     this.delayedShowMarker();
   };
 
