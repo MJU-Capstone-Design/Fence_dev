@@ -1,3 +1,3 @@
 node_modules
-client/src/components/Test/API_KEY.js
+client/src/components/Map/API_KEY.js
 server/config/database.js

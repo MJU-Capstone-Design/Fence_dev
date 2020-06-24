@@ -37,7 +37,7 @@ const latlng = "/api/info/:latlng";
 const { InfoBox } = require("react-google-maps/lib/components/addons/InfoBox");
 const GoogleMapWithPins = compose(
   withProps({
-    googleMapURL: `https://maps.googleapis.com/maps/api/js?key=${apikey}&v=3.exp&libraries=geometry,drawing,places`,
+    googleMapURL: `https://maps.googleapis.com/maps/api/js?key=AIzaSyCR1rDuOlia0H31k6leLQaeY_sMoOJoo2A&v=3.exp&libraries=geometry,drawing,places`,
     loadingElement: <div style={{ height: `100%` }} />,
     containerElement: <div style={{ height: `800px` }} />,
     mapElement: <div style={{ height: `100%` }} />,
@@ -63,7 +63,6 @@ const GoogleMapWithPins = compose(
       console.log(marker);
     },
   }),
-
   withScriptjs,
   withGoogleMap
 )((props) => (
@@ -74,14 +73,14 @@ const GoogleMapWithPins = compose(
   >
     {console.log("pros : ", props)}
 
-    { <Marker 
+    <Marker 
         position={props.center} 
-        onClick={props.menuClick}>
+        onClick={props.markerClick}>
         {props.isOpen&& <HelloInfo 
-            onCloseClick = {props.menuClick}
-            onClick = {props.menuClick}
+            onCloseClick = {props.markerClick}
+            onClick = {props.markerClick}
             />}
-    </Marker> }
+    </Marker>
 
     <MarkerClusterer
       onClick={props.onMarkerClustererClick}
@@ -93,7 +92,6 @@ const GoogleMapWithPins = compose(
       {props.markers.map((marker, idx) => (
         props.isMarkerShown && 
           <Marker
-            // onClick={props.onMarkerClick}
             key={idx}
             position={{ lat: marker.lat, lng: marker.lng }}
             icon={{ url: ICON }}
@@ -143,12 +141,7 @@ class Map extends React.PureComponent {
     console.log("componentDidMount");
   }
 
-  clearOverlays = () => {
-    this.state.markers = [];
-    console.log(this.state.markers);
-  };
-
-  menuClick = async (e) => {
+  markerClick = async () => {
     console.log("clicked!");
 
     // kakao api part
@@ -175,15 +168,12 @@ class Map extends React.PureComponent {
         console.log(data[0])
         result.j = data[0].place_name
         result.j_dis = data[0].distance
-        // this.setState(result.j = data[0].place_name)
-        // this.setState(result.j_dis = data[0].distance)
       }
     }
     function callbacks_phone (data, status, pagination) {
       if (status === kakao.maps.services.Status.OK) {
         console.log(data[0])
         result.phone = data[0].phone
-        // this.setState(result.phone = data[0].phone)
       }
     }
 
@@ -212,21 +202,21 @@ class Map extends React.PureComponent {
         console.log(data)
       })
     
-
     this.setState({ rank: [] })
     setTimeout(() => {
-      var pol = `${result.s}`
       console.log(result)
-      console.log("result.p: ", result.p)
+      if (result.p_dis < result.j_dis) {
+        result.s = result.p.slice(0, -3)
+      } else {
+        result.s = result.j.slice(0, -3)
+      }
       console.log('api/findRank')
-      console.log('result.s: ', result.s)
-      fetch(`api/findRank/${pol}`)
+      fetch(`api/findRank/${result.s}`)
         .then((res) => res.json())
         .then((data) => {
           console.log("치안등급 데이터 : ", data);
           this.setState({ rank: data });
         });
-      
     }, 3000);
   }
 
@@ -247,7 +237,6 @@ class Map extends React.PureComponent {
 
   menuClick = async (e) => {
     await this.showIcon(e)
-    // // menu icon click part
     // var menuIcon = [bell, police, light, cctv]
     // var icons = [markerBell, markerPolice, markerLight, markerCCTV]
     // console.log("menu Click-->" + e)
@@ -270,66 +259,6 @@ class Map extends React.PureComponent {
     //     this.setState({ markers: data });
     //   });
     // })
-
-    
-    // // kakao api part
-    // var latlng = this.state.center
-    // var result = {
-    //   p: '', p_dis: 0,
-    //   j: '', j_dis: 0,
-    //   phone: ''
-    // }
-    // var ps = new kakao.maps.services.Places(); 
-    // function callbacks_p (data, status, pagination) {
-    //   if (status === kakao.maps.services.Status.OK) {
-    //     console.log(data[0])
-    //     result.p = data[0].place_name
-    //     result.p_dis = data[0].distance
-    //   }
-    // }
-    // function callbacks_j (data, status, pagination) {
-    //   if (status === kakao.maps.services.Status.OK) {
-    //     console.log(data[0])
-    //     result.j = data[0].place_name
-    //     result.j_dis = data[0].distance
-    //   }
-    // }
-    // function callbacks_phone (data, status, pagination) {
-    //   if (status === kakao.maps.services.Status.OK) {
-    //     console.log(data[0])
-    //     result.phone = data[0].phone
-    //   }
-    // }
-    // var options_acc = {
-    //   location: new kakao.maps.LatLng(latlng.lat, latlng.lng),
-    //   sort: kakao.maps.services.SortBy.ACCURACY
-    // }
-    // var options_dis = {
-    //   location: new kakao.maps.LatLng(latlng.lat, latlng.lng),
-    //   sort: kakao.maps.services.SortBy.DISTANCE
-    // }
-    // ps.keywordSearch('지구대', callbacks_j, options_acc)
-    // ps.keywordSearch('파출소', callbacks_p, options_acc)
-    // ps.keywordSearch('주민센터', callbacks_phone, options_dis)
-
-    // setTimeout(() => {
-    //   console.log('/api/findRank')
-    //   fetch('/api/findRank')
-    //     .then((res) => res.json())
-    //     .then((data) => {
-    //       console.log("치안등급 데이터 : ", data);
-    //       // this.setState({ markers: data });
-    //     });
-    // }, 3000);
-
-    // // marker click event 부분
-    // var location = this.state.center
-    // var latlng = `${location.lat}, ${location.lng}`
-    // fetch(`/api/info/${latlng}`)
-    //   .then(res => res.json())
-    //   .then(data => {
-    //     console.log(data)
-    //   })
   };
 
   delayedShowMarker = () => {
@@ -356,6 +285,7 @@ class Map extends React.PureComponent {
         <GoogleMapWithPins
           markers={this.state.markers}
           isMarkerShown={this.state.isMarkerShown}
+          markerClick={this.markerClick}
           menuClick={this.menuClick}
           onMarkerClick={this.handleMarkerClick}
           center={center}

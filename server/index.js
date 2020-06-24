@@ -61,6 +61,7 @@ app.get("/api/findRank/:pol", function (req, res) {
     if (err) throw err;
     res.json(rows);
   });
+  // res.json("{result: databse 연결안함;}")
 });
 
 app.get("/api/info/:latlng", function (req, res) {
