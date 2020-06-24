@@ -64,6 +64,13 @@ const GoogleMapWithPins = compose(
     center={props.center}
     zoom={props.zoom}
     options={{ maxZoom: 18, disableDefaultUI: true, zoomControl: true }}
+    onClick={(e) => {
+      if(props.isOpen == true) {
+        props.onToggleOpen(); 
+      }
+      console.log(e.latLng.lat());
+      props.onPlaceSelected({ lat: e.latLng.lat(), lng: e.latLng.lng() });
+    }}
   >
     {console.log("pros : ", props)}
     { <Marker 
@@ -260,6 +267,7 @@ class Map extends React.PureComponent {
           onMarkerClick={this.handleMarkerClick}
           center={center}
           zoom={zoom}
+          onPlaceSelected={this.onPlaceSelected}
         />
       </>
     );

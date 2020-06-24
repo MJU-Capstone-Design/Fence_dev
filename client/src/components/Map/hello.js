@@ -15,6 +15,7 @@ class HelloInfo extends React.PureComponent {
       compare: []
     }
 
+    // 범죄 등급 4, 5 이상인것만 뽑기
     var crime = [
       {name: "강도", seq: rank["강도"]}, 
       {name: "살인", seq: rank["살인"]}, 
@@ -36,6 +37,7 @@ class HelloInfo extends React.PureComponent {
       info.crime.push("범죄에 취약한 지역입니다!", <br />, "주의 하세요!!!")
     }
 
+    // 부족한 시설 내역
     if (grid_avg.cctv > grid.cctv) {
       info.compare.push(" <cctv> ")
     }
@@ -51,9 +53,7 @@ class HelloInfo extends React.PureComponent {
       info.compare.push("의 수가 부족한 지역입니다!", <br />, "관할구청에 연락하세요")
     }
     
-
     console.log(info)
-
     return (
       <InfoWindow onCloseClick = {this.props.onCloseClick}>
         <div class="infoTag">
