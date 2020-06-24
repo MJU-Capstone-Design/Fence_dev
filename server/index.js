@@ -52,9 +52,10 @@ app.get("/api/bells", function (req, res) {
   });
 });
 
-app.get("/api/findRank", function (req, res) {
+app.get("/api/findRank/:pol", function (req, res) {
   console.log("come in /api/findRank")
-  // var queryString = "SELECT * FROM 안전비상벨 limit 100";
+  var pol = req.params.pol
+  var queryString = `SELECT * FROM 치안등급 WHERE 지구대="${pol}"`;
   connection.query(queryString, function (err, rows, field) {
     console.log(rows)
     if (err) throw err;
@@ -78,22 +79,23 @@ app.get("/api/info/:latlng", function (req, res) {
     light: 0,
     bell: 0
   }
-  console.log(data)
+  // console.log(data)
   connection.query(query_cctv, function (err, rows, field) {
-    // console.log(rows)
+    console.log(rows)
     if (err) throw err;
     data.cctv = rows.cnt;
   });
   connection.query(query_light, function (err, rows, field) {
-    // console.log(rows)
+    console.log(rows)
     if (err) throw err;
     data.light = rows.cnt;
   })
   connection.query(query_bell, function (err, rows, field) {
-    // console.log(rows)
+    console.log(rows)
     if (err) throw err;
     data.bell = rows.cnt;
   });
   res.json(data);
+  console.log(data);
 });
 

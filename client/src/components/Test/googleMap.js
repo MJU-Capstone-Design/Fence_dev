@@ -32,6 +32,8 @@ const cctv = "/api/cctvs";
 const light = "/api/lights";
 const police = "/api/polices";
 const bell = "/api/bells";
+const findRank = "/api/findRank";
+const latlng = "/api/info/:latlng";
 
 const { InfoBox } = require("react-google-maps/lib/components/addons/InfoBox");
 const GoogleMapWithPins = compose(
@@ -42,16 +44,16 @@ const GoogleMapWithPins = compose(
     containerElement: <div style={{ height: `800px` }} />,
     mapElement: <div style={{ height: `100%` }} />,
   }),
-  withStateHandlers(
-    () => ({
-      isOpen: false,
-    }),
-    {
-      onToggleOpen: ({ isOpen }) => () => ({
-        isOpen: !isOpen,
-      }),
-    }
-  ),
+  // withStateHandlers(
+  //   () => ({
+  //     isOpen: false,
+  //   }),
+  //   {
+  //     onToggleOpen: ({ isOpen }) => () => ({
+  //       isOpen: !isOpen,
+  //     }),
+  //   }
+  // ),
   withHandlers({
     onMarkerClustererClick: () => (markerClusterer) => {
       const clickedMarkers = markerClusterer.getMarkers();
@@ -63,6 +65,7 @@ const GoogleMapWithPins = compose(
       console.log(marker);
     },
   }),
+
   withScriptjs,
   withGoogleMap
 )((props) => (
@@ -75,13 +78,10 @@ const GoogleMapWithPins = compose(
 
     { <Marker 
         position={props.center} 
-        onClick={props.onToggleOpen}>
+        onClick={props.menuClick}>
         {props.isOpen&& <HelloInfo 
-            onCloseClick = {props.onToggleOpen}
-            // grade={}
-            // cctv={}
-            // light={}
-            // bell={}
+            onCloseClick = {props.menuClick}
+            onClick = {props.menuClick}
             />}
       </Marker> }
 
@@ -124,7 +124,8 @@ class Map extends React.PureComponent {
       cctv: 0,
       light: 0,
       bell: 0,
-    }
+    },
+    isOpen: false,
   };
 
   onPlaceSelected = ({ lat, lng }) => {
@@ -163,12 +164,26 @@ class Map extends React.PureComponent {
   };
 
   menuClick = async (e) => {
+    console.log("clicked!");
+
+    // withStateHandlers(
+    //   () => ({
+    //     isOpen: false,
+    //   }),
+    //   {
+    //     onToggleOpen: ({ isOpen }) => () => ({
+    //       isOpen: !isOpen,
+    //     }),
+    //   }
+    // )
+
     // kakao api part
     var latlng = this.state.center
     var result = {
       p: '', p_dis: 0,
       j: '', j_dis: 0,
-      phone: ''
+      phone: '',
+      s: ''
     }
     var ps = new kakao.maps.services.Places(); 
     function callbacks_p (data, status, pagination) {
@@ -176,6 +191,9 @@ class Map extends React.PureComponent {
         console.log(data[0])
         result.p = data[0].place_name
         result.p_dis = data[0].distance
+        result.s = result.p.slice(0, -3)
+        // this.setState(result.p = data[0].place_name)
+        // this.setState(result.p_dis = data[0].distance)
       }
     }
     function callbacks_j (data, status, pagination) {
@@ -183,14 +201,18 @@ class Map extends React.PureComponent {
         console.log(data[0])
         result.j = data[0].place_name
         result.j_dis = data[0].distance
+        // this.setState(result.j = data[0].place_name)
+        // this.setState(result.j_dis = data[0].distance)
       }
     }
     function callbacks_phone (data, status, pagination) {
       if (status === kakao.maps.services.Status.OK) {
         console.log(data[0])
         result.phone = data[0].phone
+        // this.setState(result.phone = data[0].phone)
       }
     }
+
     var options_acc = {
       location: new kakao.maps.LatLng(latlng.lat, latlng.lng),
       sort: kakao.maps.services.SortBy.ACCURACY
@@ -203,24 +225,35 @@ class Map extends React.PureComponent {
     ps.keywordSearch('파출소', callbacks_p, options_acc)
     ps.keywordSearch('주민센터', callbacks_phone, options_dis)
 
-    setTimeout(() => {
-      console.log('api/findRank')
-      fetch()
-        .then((res) => res.json())
-        .then((data) => {
-          console.log("치안등급 데이터 : ", data);
-          // this.setState({ markers: data });
-        });
-    }, 3000);
+    console.log(result)
 
     // marker click event 부분
     var location = this.state.center
     var latlng = `${location.lat}, ${location.lng}`
+    console.log(latlng)
+    console.log(this.props.center)
     fetch(`/api/info/${latlng}`)
       .then(res => res.json())
       .then(data => {
         console.log(data)
       })
+    
+
+    this.setState({ rank: [] })
+    setTimeout(() => {
+      var pol = `${result.s}`
+      console.log(result)
+      console.log("result.p: ", result.p)
+      console.log('api/findRank')
+      console.log('result.s: ', result.s)
+      fetch(`api/findRank/${pol}`)
+        .then((res) => res.json())
+        .then((data) => {
+          console.log("치안등급 데이터 : ", data);
+          this.setState({ rank: data });
+        });
+      
+    }, 3000);
 
     // menu icon click part
     this.handleMarkerClick()
