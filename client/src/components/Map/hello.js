@@ -7,7 +7,7 @@ class HelloInfo extends React.PureComponent {
     console.log("infoData : ",this.props.infoData)
     return (
       <InfoWindow onCloseClick = {this.props.onCloseClick}>
-        <p>현재 이 지역의 보안등급은 </p>
+        <p>현재 이 지역의 보안등급은 {this.props.infoData.rank}</p>
       </InfoWindow>
       
     )

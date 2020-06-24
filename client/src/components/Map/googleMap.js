@@ -47,9 +47,7 @@ const GoogleMapWithPins = compose(
       isOpen: false,
     }),
     {
-      onToggleOpen: ({ isOpen }) => () => ({
-        isOpen: !isOpen,
-      }),
+      onToggleOpen: ({ isOpen }) => () => ({ isOpen: !isOpen }),
     }
   ),
   withHandlers({
@@ -58,10 +56,6 @@ const GoogleMapWithPins = compose(
       console.log(`Current clicked markers length: ${clickedMarkers.length}`);
       console.log(clickedMarkers);
     },
-    // onMarkerClick: () => (marker) => {
-    //   marker.isOpen = !marker.isOpen;
-    //   console.log(marker);
-    // },
   }),
   withScriptjs,
   withGoogleMap
@@ -74,7 +68,11 @@ const GoogleMapWithPins = compose(
     {console.log("pros : ", props)}
     { <Marker 
         position={props.center} 
-        onClick= {(event) => { props.onToggleOpen(); props.markerClick()}}
+        onClick= {(event) => { 
+          setTimeout(() => {
+            props.onToggleOpen(); 
+          }, 1500);
+          props.markerClick()}}
       >
         {props.isOpen&& <HelloInfo 
             infoData= {props.result}

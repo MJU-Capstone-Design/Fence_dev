@@ -86,19 +86,21 @@ app.get("/api/info/:latlng", function (req, res) {
   connection.query(query_cctv, function (err, rows, field) {
     console.log(rows)
     if (err) throw err;
-    data.cctv = rows.cnt;
+    data.cctv = rows[0].cnt;
   });
   connection.query(query_light, function (err, rows, field) {
     console.log(rows)
     if (err) throw err;
-    data.light = rows.cnt;
+    data.light = rows[0].cnt;
   })
   connection.query(query_bell, function (err, rows, field) {
     console.log(rows)
     if (err) throw err;
-    data.bell = rows.cnt;
+    data.bell = rows[0].cnt;
   });
-  res.json(data);
-  console.log(data);
+  setTimeout(() => {
+    console.log(data);
+    res.json(data);
+  }, 1000);
 });
 
