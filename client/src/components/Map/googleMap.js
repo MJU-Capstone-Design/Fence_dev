@@ -42,26 +42,26 @@ const GoogleMapWithPins = compose(
     containerElement: <div style={{ height: `800px` }} />,
     mapElement: <div style={{ height: `100%` }} />,
   }),
-  // withStateHandlers(
-  //   () => ({
-  //     isOpen: false,
-  //   }),
-  //   {
-  //     onToggleOpen: ({ isOpen }) => () => ({
-  //       isOpen: !isOpen,
-  //     }),
-  //   }
-  // ),
+  withStateHandlers(
+    () => ({
+      isOpen: false,
+    }),
+    {
+      onToggleOpen: ({ isOpen }) => () => ({
+        isOpen: !isOpen,
+      }),
+    }
+  ),
   withHandlers({
     onMarkerClustererClick: () => (markerClusterer) => {
       const clickedMarkers = markerClusterer.getMarkers();
       console.log(`Current clicked markers length: ${clickedMarkers.length}`);
       console.log(clickedMarkers);
     },
-    onMarkerClick: () => (marker) => {
-      marker.isOpen = !marker.isOpen;
-      console.log(marker);
-    },
+    // onMarkerClick: () => (marker) => {
+    //   marker.isOpen = !marker.isOpen;
+    //   console.log(marker);
+    // },
   }),
   withScriptjs,
   withGoogleMap
@@ -72,16 +72,13 @@ const GoogleMapWithPins = compose(
     options={{ maxZoom: 18, disableDefaultUI: true, zoomControl: true }}
   >
     {console.log("pros : ", props)}
-
-    <Marker 
+    { <Marker 
         position={props.center} 
-        onClick={props.markerClick}>
+        onClick= {(event) => { props.onToggleOpen(); props.markerClick()}}
+      >
         {props.isOpen&& <HelloInfo 
-            onCloseClick = {props.markerClick}
-            onClick = {props.markerClick}
-            />}
-    </Marker>
-
+            onCloseClick = {props.onToggleOpen}/>}
+      </Marker> }  
     <MarkerClusterer
       onClick={props.onMarkerClustererClick}
       averageCenter
@@ -135,12 +132,13 @@ class Map extends React.PureComponent {
 
   componentWillMount() {
     this.setState({ markers: [],
-    e: 5 });
+    e: 5 ,
+    isOpen: false});
   }
   componentDidMount() {
     console.log("componentDidMount");
   }
-
+  
   markerClick = async () => {
     console.log("clicked!");
 
@@ -159,8 +157,6 @@ class Map extends React.PureComponent {
         result.p = data[0].place_name
         result.p_dis = data[0].distance
         result.s = result.p.slice(0, -3)
-        // this.setState(result.p = data[0].place_name)
-        // this.setState(result.p_dis = data[0].distance)
       }
     }
     function callbacks_j (data, status, pagination) {
@@ -189,13 +185,10 @@ class Map extends React.PureComponent {
     ps.keywordSearch('파출소', callbacks_p, options_acc)
     ps.keywordSearch('주민센터', callbacks_phone, options_dis)
 
-    console.log(result)
-
     // marker click event 부분
     var location = this.state.center
     var latlng = `${location.lat}, ${location.lng}`
     console.log(latlng)
-    console.log(this.props.center)
     fetch(`/api/info/${latlng}`)
       .then(res => res.json())
       .then(data => {
@@ -204,7 +197,7 @@ class Map extends React.PureComponent {
     
     this.setState({ rank: [] })
     setTimeout(() => {
-      console.log(result)
+      console.log("result : ",result)
       if (result.p_dis < result.j_dis) {
         result.s = result.p.slice(0, -3)
       } else {
@@ -217,12 +210,11 @@ class Map extends React.PureComponent {
           console.log("치안등급 데이터 : ", data);
           this.setState({ rank: data });
         });
-    }, 3000);
+    }, 1000);
   }
 
   showIcon = async (e) => {
     // menu icon click part
-    this.forceUpdate();
     var menuIcon = [bell, police, light, cctv]
     var icons = [markerBell, markerPolice, markerLight, markerCCTV]
     console.log("menu Click-->" + e)
@@ -268,7 +260,6 @@ class Map extends React.PureComponent {
   };
 
   handleMarkerClick = () => {
-    // this.setState({ isMarkerShown: false });
     this.setState({ isMarkerShown: true, markers: [] });
     this.delayedShowMarker();
   };
