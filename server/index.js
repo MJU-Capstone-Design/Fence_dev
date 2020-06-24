@@ -57,13 +57,12 @@ app.get("/api/bells", function (req, res) {
 app.get("/api/findRank/:pol", function (req, res) {
   console.log("come in /api/findRank")
   var pol = req.params.pol
-  res.json("{result: databse 연결안함;}")
-  // var queryString = `SELECT * FROM 치안등급 WHERE 지구대="${pol}"`;
-  // connection.query(queryString, function (err, rows, field) {
-  //   console.log(rows)
-  //   if (err) throw err;
-  //   res.json(rows);
-  // });
+  var queryString = `SELECT * FROM 치안등급 WHERE 지구대="${pol}"`;
+  connection.query(queryString, function (err, rows, field) {
+    // console.log(rows)
+    if (err) throw err;
+    res.json(rows);
+  });
 });
 
 app.get("/api/info/:latlng", function (req, res) {

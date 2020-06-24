@@ -50,3 +50,7 @@ code {
   width: 60px;
   cursor: pointer;
 }
+
+.infoTag {
+  text-align: center;
+}
