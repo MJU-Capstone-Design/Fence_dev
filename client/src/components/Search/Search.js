@@ -62,23 +62,29 @@ function Search({ onPlaceSelected }) {
       );
     });
 
+  const placeSelect = async (address) => {
+    setValue(address, false);
+    clearSuggestions();
+
+    try {
+      const results = await getGeocode({ address });
+      const { lat, lng } = await getLatLng(results[0]);
+      onPlaceSelected({ lat, lng });
+      console.log(results);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // const appKeyPress = (e) => {
+  //   if (e.key === "Enter") {
+  //     this.placeSelect();
+  //   }
+  // };
+
   return (
     <div className="search">
-      <Combobox
-        onSelect={async (address) => {
-          setValue(address, false);
-          clearSuggestions();
-
-          try {
-            const results = await getGeocode({ address });
-            const { lat, lng } = await getLatLng(results[0]);
-            onPlaceSelected({ lat, lng });
-            console.log(results);
-          } catch (error) {
-            console.log(error);
-          }
-        }}
-      >
+      <Combobox onSelect={placeSelect}>
         <ComboboxInput
           value={value}
           onChange={(e) => {
@@ -86,6 +92,7 @@ function Search({ onPlaceSelected }) {
           }}
           disabled={!ready}
           placeholder="Enter an Address"
+          // onKeyPress={appKeyPress}
         />
         <ComboboxPopover>
           <ComboboxList>
