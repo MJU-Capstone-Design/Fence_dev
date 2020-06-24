@@ -5,7 +5,9 @@ const mysql = require("mysql");
 const dbconfig = require("./config/database.js");
 const connection = mysql.createConnection(dbconfig);
 
-app.get("/", (req, res) => res.send("Hello World!"));
+app.get("/", (req, res) => {
+  res.send("Hello World!")
+});
 
 app.listen(port, () =>
   console.log(`Example app listening at http://localhost:${port}`)
@@ -16,7 +18,7 @@ app.get("/api/lights", (req, res) => {
   var queryString = "SELECT * FROM 방범등가로등 limit 100";
 
   connection.query(queryString, function (err, rows, field) {
-    // console.log(rows)
+    console.log(rows)
     if (err) throw err;
     res.json(rows);
   });

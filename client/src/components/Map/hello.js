@@ -4,10 +4,10 @@ const { InfoWindow } = require("react-google-maps");
 
 class HelloInfo extends React.PureComponent {
   render() {
-    console.log("클릭?")
+    console.log("infoData : ",this.props.infoData)
     return (
       <InfoWindow onCloseClick = {this.props.onCloseClick}>
-        <p>opened</p>
+        <p>현재 이 지역의 보안등급은 </p>
       </InfoWindow>
       
     )

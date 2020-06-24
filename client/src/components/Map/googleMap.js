@@ -37,7 +37,7 @@ const latlng = "/api/info/:latlng";
 const { InfoBox } = require("react-google-maps/lib/components/addons/InfoBox");
 const GoogleMapWithPins = compose(
   withProps({
-    googleMapURL: `https://maps.googleapis.com/maps/api/js?key=AIzaSyCR1rDuOlia0H31k6leLQaeY_sMoOJoo2A&v=3.exp&libraries=geometry,drawing,places`,
+    googleMapURL: `https://maps.googleapis.com/maps/api/js?key=${apikey}&v=3.exp&libraries=geometry,drawing,places`,
     loadingElement: <div style={{ height: `100%` }} />,
     containerElement: <div style={{ height: `800px` }} />,
     mapElement: <div style={{ height: `100%` }} />,
@@ -77,6 +77,7 @@ const GoogleMapWithPins = compose(
         onClick= {(event) => { props.onToggleOpen(); props.markerClick()}}
       >
         {props.isOpen&& <HelloInfo 
+            infoData= {props.result}
             onCloseClick = {props.onToggleOpen}/>}
       </Marker> }  
     <MarkerClusterer
@@ -119,7 +120,6 @@ class Map extends React.PureComponent {
       light: 0,
       bell: 0,
     },
-    isOpen: false,
   };
 
   onPlaceSelected = ({ lat, lng }) => {
@@ -132,8 +132,11 @@ class Map extends React.PureComponent {
 
   componentWillMount() {
     this.setState({ markers: [],
-    e: 5 ,
-    isOpen: false});
+    result: {
+      rank: '',
+      grid: '',
+      search: ''
+    }});
   }
   componentDidMount() {
     console.log("componentDidMount");
@@ -193,22 +196,32 @@ class Map extends React.PureComponent {
       .then(res => res.json())
       .then(data => {
         console.log(data)
+        var x = this.state.result
+        x.grid = data
+        this.setState({result: x})
       })
     
-    this.setState({ rank: [] })
     setTimeout(() => {
       console.log("result : ",result)
       if (result.p_dis < result.j_dis) {
         result.s = result.p.slice(0, -3)
+        var x = this.state.result
+        x.search = result
+        this.setState({result: x})
       } else {
         result.s = result.j.slice(0, -3)
+        var x = this.state.result
+        x.search = result
+        this.setState({result: x})
       }
       console.log('api/findRank')
       fetch(`api/findRank/${result.s}`)
         .then((res) => res.json())
         .then((data) => {
           console.log("치안등급 데이터 : ", data);
-          this.setState({ rank: data });
+          var x = this.state.result
+          x.rank = data
+          this.setState({result: x})
         });
     }, 1000);
   }
@@ -229,39 +242,6 @@ class Map extends React.PureComponent {
 
   menuClick = async (e) => {
     await this.showIcon(e)
-    // var menuIcon = [bell, police, light, cctv]
-    // var icons = [markerBell, markerPolice, markerLight, markerCCTV]
-    // console.log("menu Click-->" + e)
-    // ICON = icons[e]
-
-    // await this.clearOverlays();
-    // fetch(menuIcon[e])
-    // .then((res) => res.json())
-    // .then((data) => {
-    //   console.log("menue click");
-    //   this.setState({ markers: data, isMarkerShown: true});
-    // });
-    // this.setState({ markers: [], e: e, isMarkerShown: true }, () => {
-    //   console.log('다른 아이콘 클릭');
-    //   console.log('state : ', this.state.markers);
-    //   fetch(menuIcon[e])
-    //   .then((res) => res.json())
-    //   .then((data) => {
-    //     console.log("menue click");
-    //     this.setState({ markers: data });
-    //   });
-    // })
-  };
-
-  delayedShowMarker = () => {
-    setTimeout(() => {
-      this.setState({ isMarkerShown: true });
-    }, 3000);
-  };
-
-  handleMarkerClick = () => {
-    this.setState({ isMarkerShown: true, markers: [] });
-    this.delayedShowMarker();
   };
 
   render() {
@@ -274,6 +254,7 @@ class Map extends React.PureComponent {
         <Search onPlaceSelected={this.onPlaceSelected} />
         <Intro onPlaceSelected={this.onPlaceSelected} />
         <GoogleMapWithPins
+          result={this.state.result}
           markers={this.state.markers}
           isMarkerShown={this.state.isMarkerShown}
           markerClick={this.markerClick}
