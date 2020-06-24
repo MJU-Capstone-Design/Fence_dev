@@ -37,7 +37,7 @@ const latlng = "/api/info/:latlng";
 const { InfoBox } = require("react-google-maps/lib/components/addons/InfoBox");
 const GoogleMapWithPins = compose(
   withProps({
-    googleMapURL: `https://maps.googleapis.com/maps/api/js?key=${api_key}&v=3.exp&libraries=geometry,drawing,places`,
+    googleMapURL: `https://maps.googleapis.com/maps/api/js?key=${apikey}&v=3.exp&libraries=geometry,drawing,places`,
     loadingElement: <div style={{ height: `100%` }} />,
     containerElement: <div style={{ height: `800px` }} />,
     mapElement: <div style={{ height: `100%` }} />,
@@ -142,21 +142,6 @@ class Map extends React.PureComponent {
   componentDidMount() {
     console.log("componentDidMount");
   }
-  // menuClick = async (e) => {
-  //   await this.clearOverlays();
-  //   await console.log(this.state.markers);
-  //   var menuIcon = [bell, police, light, cctv, demo];
-  //   var icons = [markerBell, markerPolice, markerLight, markerCCTV, markerDemo];
-  //   console.log("menu Click-->" + e);
-  //   ICON = icons[e];
-  //   await fetch(menuIcon[e])
-  //     .then((res) => res.json())
-  //     .then((data) => {
-  //       console.log("menue click");
-  //       console.log(data);
-  //       this.setState({ markers: data });
-  //     });
-  // };
 
   clearOverlays = () => {
     this.state.markers = [];
@@ -165,17 +150,6 @@ class Map extends React.PureComponent {
 
   menuClick = async (e) => {
     console.log("clicked!");
-
-    // withStateHandlers(
-    //   () => ({
-    //     isOpen: false,
-    //   }),
-    //   {
-    //     onToggleOpen: ({ isOpen }) => () => ({
-    //       isOpen: !isOpen,
-    //     }),
-    //   }
-    // )
 
     // kakao api part
     var latlng = this.state.center
@@ -254,6 +228,7 @@ class Map extends React.PureComponent {
         });
       
     }, 3000);
+  }
 
   showIcon = async (e) => {
     // menu icon click part
@@ -269,6 +244,7 @@ class Map extends React.PureComponent {
       this.setState({ markers: data, isMarkerShown: true});
     });
   }
+
   menuClick = async (e) => {
     await this.showIcon(e)
     // // menu icon click part
