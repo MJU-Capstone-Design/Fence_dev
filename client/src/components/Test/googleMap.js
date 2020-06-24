@@ -1,6 +1,6 @@
 /*global google*/
 import React from "react";
-import { apikey } from "./API_KEY.js";
+import { api_key } from "./API_KEY.js";
 import { Config } from "../../config";
 import Search from "../Search/Search";
 import Intro from "./intro.js"
@@ -39,7 +39,7 @@ const { InfoBox } = require("react-google-maps/lib/components/addons/InfoBox");
 const GoogleMapWithPins = compose(
   // withState('markers', 'setMarkers', []),
   withProps({
-    googleMapURL: `https://maps.googleapis.com/maps/api/js?key=${apikey}&v=3.exp&libraries=geometry,drawing,places`,
+    googleMapURL: `https://maps.googleapis.com/maps/api/js?key=${api_key}&v=3.exp&libraries=geometry,drawing,places`,
     loadingElement: <div style={{ height: `100%` }} />,
     containerElement: <div style={{ height: `800px` }} />,
     mapElement: <div style={{ height: `100%` }} />,
