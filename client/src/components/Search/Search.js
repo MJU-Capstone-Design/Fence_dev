@@ -14,8 +14,6 @@ import {
 } from "@reach/combobox";
 import "@reach/combobox/styles.css";
 
-// import styled from "styled-components";
-
 function Search({ onPlaceSelected }) {
   const {
     ready,
@@ -31,54 +29,23 @@ function Search({ onPlaceSelected }) {
     debounce: 300,
   });
 
-  const handleSelect = ({ description }) => () => {
-    // When user selects a place, we can replace the keyword without request data from API
-    // by setting the second parameter as "false"
-    setValue(description, false);
+  const placeSelect = async (address) => {
+    setValue(address, false);
     clearSuggestions();
 
-    // Get latitude and longitude via utility functions
-    getGeocode({ address: description })
-      .then((results) => getLatLng(results[0]))
-      .then(({ lat, lng }) => {
-        console.log("📍 Coordinates: ", { lat, lng });
-      })
-      .catch((error) => {
-        console.log("😱 Error: ", error);
-      });
+    try {
+      const results = await getGeocode({ address });
+      const { lat, lng } = await getLatLng(results[0]);
+      onPlaceSelected({ lat, lng });
+      // console.log(results);
+    } catch (error) {
+      console.log(error);
+    }
   };
-
-  const renderSuggestions = () =>
-    data.map((suggestion) => {
-      const {
-        id,
-        structured_formatting: { main_text, secondary_text },
-      } = suggestion;
-
-      return (
-        <li key={id}>
-          <strong>{main_text}</strong> <small>{secondary_text}</small>
-        </li>
-      );
-    });
 
   return (
     <div className="search">
-      <Combobox
-        onSelect={async (address) => {
-          setValue(address, false);
-          clearSuggestions();
-
-          try {
-            const results = await getGeocode({ address });
-            const { lat, lng } = await getLatLng(results[0]);
-            onPlaceSelected({ lat, lng });
-            console.log(results);
-          } catch (error) {
-            console.log(error);
-          }
-        }}
-      >
+      <Combobox onSelect={placeSelect}>
         <ComboboxInput
           value={value}
           onChange={(e) => {
@@ -86,6 +53,7 @@ function Search({ onPlaceSelected }) {
           }}
           disabled={!ready}
           placeholder="Enter an Address"
+          // onKeyPress={appKeyPress}
         />
         <ComboboxPopover>
           <ComboboxList>

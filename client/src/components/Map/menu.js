@@ -1,13 +1,14 @@
-import React, { Component } from 'react';
-import './menu.sass';
+import React, { Component } from "react";
+import "./menu.sass";
 
 class Menu extends Component {
-
-  render(){
+  render() {
     return (
       <nav id="menuWithButton">
         <ul>
-          <li> <img src="./menuImg/resized/menu.png" alt="menu" />
+          <li>
+            {" "}
+            <img src="./menuImg/resized/menu.png" alt="menu" />
             <ul class="drop-menu menu1">
               <li>
                 <button onClick={this.props.menuClick.bind(this, 0)}>
@@ -16,7 +17,10 @@ class Menu extends Component {
               </li>
               <li>
                 <button onClick={this.props.menuClick.bind(this, 1)}>
-                  <img src="./menuImg/resized/policeStationPin.png" alt="치안시설" />
+                  <img
+                    src="./menuImg/resized/policeStationPin.png"
+                    alt="치안시설"
+                  />
                 </button>
               </li>
               <li>
@@ -33,7 +37,6 @@ class Menu extends Component {
           </li>
         </ul>
       </nav>
-
     );
   }
 }

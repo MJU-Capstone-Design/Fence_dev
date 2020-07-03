@@ -2,14 +2,19 @@
 import React from "react";
 import { apikey } from "./API_KEY.js";
 import Search from "../Search/Search";
-import Intro from "./intro.js"
+import Intro from "./intro.js";
 import Menu from "./menu.js";
 import MapControler from "./mapControler.js";
 import Header from "../Header/Header";
 import HelloInfo from "./hello.js";
 
 const { kakao } = window;
-const { compose, withProps, withHandlers, withStateHandlers } = require("recompose");
+const {
+  compose,
+  withProps,
+  withHandlers,
+  withStateHandlers,
+} = require("recompose");
 const {
   withScriptjs,
   withGoogleMap,
@@ -65,26 +70,30 @@ const GoogleMapWithPins = compose(
     zoom={props.zoom}
     options={{ maxZoom: 18, disableDefaultUI: true, zoomControl: true }}
     onClick={(e) => {
-      if(props.isOpen == true) {
-        props.onToggleOpen(); 
+      if (props.isOpen == true) {
+        props.onToggleOpen();
       }
-      console.log(e.latLng.lat());
       props.onPlaceSelected({ lat: e.latLng.lat(), lng: e.latLng.lng() });
     }}
   >
-    {console.log("pros : ", props)}
-    { <Marker 
-        position={props.center} 
-        onClick= {(event) => { 
+    {
+      <Marker
+        position={props.center}
+        onClick={(event) => {
           setTimeout(() => {
-            props.onToggleOpen(); 
+            props.onToggleOpen();
           }, 1500);
-          props.markerClick()}}
+          props.markerClick();
+        }}
       >
-        {props.isOpen&& <HelloInfo 
-            infoData= {props.result}
-            onCloseClick = {props.onToggleOpen}/>}
-      </Marker> }  
+        {props.isOpen && (
+          <HelloInfo
+            infoData={props.result}
+            onCloseClick={props.onToggleOpen}
+          />
+        )}
+      </Marker>
+    }
     <MarkerClusterer
       onClick={props.onMarkerClustererClick}
       averageCenter
@@ -92,15 +101,16 @@ const GoogleMapWithPins = compose(
       gridSize={60}
       minimumClusterSize={5}
     >
-      {props.markers.map((marker, idx) => (
-        props.isMarkerShown && 
-          <Marker
-            key={idx}
-            position={{ lat: marker.lat, lng: marker.lng }}
-            icon={{ url: ICON }}
-            >
-          </Marker>
-      ))}
+      {props.markers.map(
+        (marker, idx) =>
+          props.isMarkerShown && (
+            <Marker
+              key={idx}
+              position={{ lat: marker.lat, lng: marker.lng }}
+              icon={{ url: ICON }}
+            ></Marker>
+          )
+      )}
     </MarkerClusterer>
     <MapControler position={google.maps.ControlPosition.RIGHT_TOP}>
       <Menu menuClick={props.menuClick} />
@@ -120,7 +130,7 @@ class Map extends React.PureComponent {
       lng: 126.98826,
     },
     zoom: 12,
-    avg : {
+    avg: {
       cctv: 0,
       light: 0,
       bell: 0,
@@ -136,117 +146,121 @@ class Map extends React.PureComponent {
   };
 
   componentWillMount() {
-    this.setState({ markers: [],
-    result: {
-      rank: '',
-      grid: '',
-      search: ''
-    }});
+    this.setState({
+      markers: [],
+      result: {
+        rank: "",
+        grid: "",
+        search: "",
+      },
+    });
   }
   componentDidMount() {
-    console.log("componentDidMount");
+    // console.log("componentDidMount");
   }
-  
+
   markerClick = async () => {
-    console.log("clicked!");
+    // console.log("clicked!");
 
     // kakao api part
-    var latlng = this.state.center
+    var latlng = this.state.center;
     var result = {
-      p: '', p_dis: 0,
-      j: '', j_dis: 0,
-      phone: '',
-      s: ''
-    }
-    var ps = new kakao.maps.services.Places(); 
-    function callbacks_p (data, status, pagination) {
+      p: "",
+      p_dis: 0,
+      j: "",
+      j_dis: 0,
+      phone: "",
+      s: "",
+    };
+    var ps = new kakao.maps.services.Places();
+    function callbacks_p(data, status, pagination) {
       if (status === kakao.maps.services.Status.OK) {
-        console.log(data[0])
-        result.p = data[0].place_name
-        result.p_dis = data[0].distance
-        result.s = result.p.slice(0, -3)
+        // console.log(data[0]);
+        result.p = data[0].place_name;
+        result.p_dis = data[0].distance;
+        result.s = result.p.slice(0, -3);
       }
     }
-    function callbacks_j (data, status, pagination) {
+    function callbacks_j(data, status, pagination) {
       if (status === kakao.maps.services.Status.OK) {
-        console.log(data[0])
-        result.j = data[0].place_name
-        result.j_dis = data[0].distance
+        // console.log(data[0]);
+        result.j = data[0].place_name;
+        result.j_dis = data[0].distance;
       }
     }
-    function callbacks_phone (data, status, pagination) {
+    function callbacks_phone(data, status, pagination) {
       if (status === kakao.maps.services.Status.OK) {
-        console.log(data[0])
-        result.phone = data[0].phone
+        // console.log(data[0]);
+        result.phone = data[0].phone;
       }
     }
 
     var options_acc = {
       location: new kakao.maps.LatLng(latlng.lat, latlng.lng),
-      sort: kakao.maps.services.SortBy.ACCURACY
-    }
+      sort: kakao.maps.services.SortBy.ACCURACY,
+    };
     var options_dis = {
       location: new kakao.maps.LatLng(latlng.lat, latlng.lng),
-      sort: kakao.maps.services.SortBy.DISTANCE
-    }
-    ps.keywordSearch('지구대', callbacks_j, options_acc)
-    ps.keywordSearch('파출소', callbacks_p, options_acc)
-    ps.keywordSearch('주민센터', callbacks_phone, options_dis)
+      sort: kakao.maps.services.SortBy.DISTANCE,
+    };
+    ps.keywordSearch("지구대", callbacks_j, options_acc);
+    ps.keywordSearch("파출소", callbacks_p, options_acc);
+    ps.keywordSearch("주민센터", callbacks_phone, options_dis);
 
     // marker click event 부분
-    var location = this.state.center
-    var latlng = `${location.lat}, ${location.lng}`
-    console.log(latlng)
+    var location = this.state.center;
+    var latlng = `${location.lat}, ${location.lng}`;
+    // console.log(latlng);
     fetch(`/api/info/${latlng}`)
-      .then(res => res.json())
-      .then(data => {
-        console.log(data)
-        var x = this.state.result
-        x.grid = data
-        this.setState({result: x})
-      })
-    
+      .then((res) => res.json())
+      .then((data) => {
+        // console.log(data);
+        var x = this.state.result;
+        x.grid = data;
+        this.setState({ result: x });
+      });
+
     setTimeout(() => {
-      console.log("result : ",result)
+      // console.log("result : ", result);
       if (result.p_dis < result.j_dis) {
-        result.s = result.p.slice(0, -3)
-        var x = this.state.result
-        x.search = result
-        this.setState({result: x})
+        result.s = result.p.slice(0, -3);
+        var x = this.state.result;
+        x.search = result;
+        this.setState({ result: x });
       } else {
-        result.s = result.j.slice(0, -3)
-        var x = this.state.result
-        x.search = result
-        this.setState({result: x})
+        result.s = result.j.slice(0, -3);
+        var x = this.state.result;
+        x.search = result;
+        this.setState({ result: x });
       }
-      console.log('api/findRank')
+      // console.log("api/findRank");
       fetch(`api/findRank/${result.s}`)
         .then((res) => res.json())
         .then((data) => {
-          console.log("치안등급 데이터 : ", data);
-          var x = this.state.result
-          x.rank = data
-          this.setState({result: x})
+          // console.log("치안등급 데이터 : ", data);
+          var x = this.state.result;
+          x.rank = data;
+          this.setState({ result: x });
         });
     }, 1000);
-  }
+  };
 
   showIcon = async (e) => {
     // menu icon click part
-    var menuIcon = [bell, police, light, cctv]
-    var icons = [markerBell, markerPolice, markerLight, markerCCTV]
-    console.log("menu Click-->" + e)
-    ICON = icons[e]
+    var menuIcon = [bell, police, light, cctv];
+    var icons = [markerBell, markerPolice, markerLight, markerCCTV];
+    // console.log("menu Click-->" + e);
+    ICON = icons[e];
     fetch(menuIcon[e])
-    .then((res) => res.json())
-    .then((data) => {
-      console.log("menue click");
-      this.setState({ markers: data, isMarkerShown: true});
-    });
-  }
+      .then((res) => res.json())
+      .then((data) => {
+        // console.log("menu click");
+        this.setState({ markers: data, isMarkerShown: true });
+      });
+  };
 
   menuClick = async (e) => {
-    await this.showIcon(e)
+    await this.showIcon(e);
   };
 
   render() {
