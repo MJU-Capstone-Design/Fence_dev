@@ -31,11 +31,6 @@ var markerPolice = require("./pinImage/policeStationPin.png");
 var markerLight = require("./pinImage/lightPin.png");
 var markerCCTV = require("./pinImage/cctvPin.png");
 var markerBell = require("./pinImage/bellPin.png");
-
-// var markerPolice = require("./pinImage/cap.png");
-// var markerLight = require("./pinImage/street.png");
-// var markerCCTV = require("./pinImage/cctv_icon.png");
-// var markerBell = require("./pinImage/bell_icon.png");
 var ICON;
 const cctv = "/api/cctvs";
 const light = "/api/lights";
@@ -58,10 +53,6 @@ const GoogleMapWithPins = compose(
     }),
     {
       onToggleOpen: ({ isOpen }) => () => ({ isOpen: !isOpen }),
-      // onMapClick: ({ isMarkerShown }) => (e) => ({
-      //   center: e.latLng,
-      //   isMarkerShown: true,
-      // }),
     }
   ),
   withHandlers({
@@ -79,15 +70,16 @@ const GoogleMapWithPins = compose(
     zoom={props.zoom}
     options={{ maxZoom: 18, disableDefaultUI: true, zoomControl: true }}
     onClick={(e) => {
-      console.log(e.latLng.lat());
+      if (props.isOpen == true) {
+        props.onToggleOpen();
+      }
       props.onPlaceSelected({ lat: e.latLng.lat(), lng: e.latLng.lng() });
     }}
   >
-    {console.log("pros : ", props)}
-    {props.isMarkerShown && (
+    {
       <Marker
         position={props.center}
-        onClick={() => {
+        onClick={(event) => {
           setTimeout(() => {
             props.onToggleOpen();
           }, 1500);
@@ -101,7 +93,7 @@ const GoogleMapWithPins = compose(
           />
         )}
       </Marker>
-    )}
+    }
     <MarkerClusterer
       onClick={props.onMarkerClustererClick}
       averageCenter
@@ -150,7 +142,6 @@ class Map extends React.PureComponent {
       mapPosition: { lat: lat, lng: lng },
       center: { lat: lat, lng: lng },
       zoom: 17,
-      isMarkerShown: true,
     });
   };
 
@@ -162,19 +153,14 @@ class Map extends React.PureComponent {
         grid: "",
         search: "",
       },
-      isOpen: false,
     });
   }
   componentDidMount() {
-    console.log("componentDidMount");
+    // console.log("componentDidMount");
   }
 
-  // clearOverlaysInfo = () => {
-  //   this.state.markers = [];
-  //   console.log(this.state.markers);
-  // };
   markerClick = async () => {
-    console.log("clicked!");
+    // console.log("clicked!");
 
     // kakao api part
     var latlng = this.state.center;
@@ -189,7 +175,7 @@ class Map extends React.PureComponent {
     var ps = new kakao.maps.services.Places();
     function callbacks_p(data, status, pagination) {
       if (status === kakao.maps.services.Status.OK) {
-        console.log(data[0]);
+        // console.log(data[0]);
         result.p = data[0].place_name;
         result.p_dis = data[0].distance;
         result.s = result.p.slice(0, -3);
@@ -197,14 +183,14 @@ class Map extends React.PureComponent {
     }
     function callbacks_j(data, status, pagination) {
       if (status === kakao.maps.services.Status.OK) {
-        console.log(data[0]);
+        // console.log(data[0]);
         result.j = data[0].place_name;
         result.j_dis = data[0].distance;
       }
     }
     function callbacks_phone(data, status, pagination) {
       if (status === kakao.maps.services.Status.OK) {
-        console.log(data[0]);
+        // console.log(data[0]);
         result.phone = data[0].phone;
       }
     }
@@ -224,18 +210,18 @@ class Map extends React.PureComponent {
     // marker click event 부분
     var location = this.state.center;
     var latlng = `${location.lat}, ${location.lng}`;
-    console.log(latlng);
+    // console.log(latlng);
     fetch(`/api/info/${latlng}`)
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
+        // console.log(data);
         var x = this.state.result;
         x.grid = data;
         this.setState({ result: x });
       });
 
     setTimeout(() => {
-      console.log("result : ", result);
+      // console.log("result : ", result);
       if (result.p_dis < result.j_dis) {
         result.s = result.p.slice(0, -3);
         var x = this.state.result;
@@ -247,11 +233,11 @@ class Map extends React.PureComponent {
         x.search = result;
         this.setState({ result: x });
       }
-      console.log("api/findRank");
+      // console.log("api/findRank");
       fetch(`api/findRank/${result.s}`)
         .then((res) => res.json())
         .then((data) => {
-          console.log("치안등급 데이터 : ", data);
+          // console.log("치안등급 데이터 : ", data);
           var x = this.state.result;
           x.rank = data;
           this.setState({ result: x });
@@ -263,23 +249,17 @@ class Map extends React.PureComponent {
     // menu icon click part
     var menuIcon = [bell, police, light, cctv];
     var icons = [markerBell, markerPolice, markerLight, markerCCTV];
-    console.log("menu Click-->" + e);
+    // console.log("menu Click-->" + e);
     ICON = icons[e];
     fetch(menuIcon[e])
       .then((res) => res.json())
       .then((data) => {
-        console.log("menue click");
+        // console.log("menu click");
         this.setState({ markers: data, isMarkerShown: true });
       });
   };
 
-  clearOverlaysMarkers = () => {
-    // this.state.markers.setMap(null);
-    this.state.markers = [];
-    console.log(this.state.markers);
-  };
   menuClick = async (e) => {
-    await this.clearOverlaysMarkers();
     await this.showIcon(e);
   };
 

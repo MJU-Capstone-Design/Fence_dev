@@ -14,8 +14,6 @@ import {
 } from "@reach/combobox";
 import "@reach/combobox/styles.css";
 
-// import styled from "styled-components";
-
 function Search({ onPlaceSelected }) {
   const {
     ready,
@@ -31,37 +29,6 @@ function Search({ onPlaceSelected }) {
     debounce: 300,
   });
 
-  const handleSelect = ({ description }) => () => {
-    // When user selects a place, we can replace the keyword without request data from API
-    // by setting the second parameter as "false"
-    setValue(description, false);
-    clearSuggestions();
-
-    // Get latitude and longitude via utility functions
-    getGeocode({ address: description })
-      .then((results) => getLatLng(results[0]))
-      .then(({ lat, lng }) => {
-        console.log("📍 Coordinates: ", { lat, lng });
-      })
-      .catch((error) => {
-        console.log("😱 Error: ", error);
-      });
-  };
-
-  const renderSuggestions = () =>
-    data.map((suggestion) => {
-      const {
-        id,
-        structured_formatting: { main_text, secondary_text },
-      } = suggestion;
-
-      return (
-        <li key={id}>
-          <strong>{main_text}</strong> <small>{secondary_text}</small>
-        </li>
-      );
-    });
-
   const placeSelect = async (address) => {
     setValue(address, false);
     clearSuggestions();
@@ -70,17 +37,11 @@ function Search({ onPlaceSelected }) {
       const results = await getGeocode({ address });
       const { lat, lng } = await getLatLng(results[0]);
       onPlaceSelected({ lat, lng });
-      console.log(results);
+      // console.log(results);
     } catch (error) {
       console.log(error);
     }
   };
-
-  // const appKeyPress = (e) => {
-  //   if (e.key === "Enter") {
-  //     this.placeSelect();
-  //   }
-  // };
 
   return (
     <div className="search">

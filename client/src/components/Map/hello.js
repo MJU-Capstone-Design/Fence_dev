@@ -3,7 +3,7 @@ import React from "react";
 const { InfoWindow } = require("react-google-maps");
 class HelloInfo extends React.PureComponent {
   render() {
-    console.log("infoData : ", this.props.infoData);
+    // console.log("infoData : ", this.props.infoData);
     var rank = this.props.infoData.rank[0];
     var grid = this.props.infoData.grid;
     var grid_avg = { cctv: 10.6, bell: 5.3, light: 56.8 };
@@ -31,7 +31,7 @@ class HelloInfo extends React.PureComponent {
       } else {
       }
     }
-    if (info.crime.length == 0) {
+    if (info.crime.length === 0) {
       info.crime.push(
         "5대범죄에서 안전한 지역 입니다!",
         <br />,
@@ -50,7 +50,7 @@ class HelloInfo extends React.PureComponent {
     if (grid_avg.light > grid.light) {
       info.compare.push(" <보안등> ");
     }
-    if (info.compare.length == 0) {
+    if (info.compare.length === 0) {
       info.compare.push(
         "부족한 안전시설이 없습니다!",
         <br />,
@@ -64,7 +64,7 @@ class HelloInfo extends React.PureComponent {
       );
     }
 
-    console.log(info);
+    // console.log(info);
 
     return (
       <InfoWindow onCloseClick={this.props.onCloseClick}>
